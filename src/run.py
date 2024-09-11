@@ -1,11 +1,7 @@
 import gc
-import json
 import os
-import random
 import sys
-from datetime import datetime
-import csv
-import shutil
+import torch.nn as nn
 
 import mlflow
 import numpy as np
@@ -27,20 +23,11 @@ from optim.optimizer import generate_optimization_elements
 from src.data.handle_dataset import generate_transform
 from src.data.prepare_data import balance_data, split_data
 from src.data.components import ResNet18_Dataset
+from src.models.resnet18_module import ResNet18Module
 
 from src.optim.evaluation_model import metrics_quality
 
-def load_data():
-    hdf5_file = "data/train_data.h5"
-    
-    with h5py.File(hdf5_file, 'r') as hdf:
-        # Extract the images (X)
-        X = np.array(hdf['images'])
-        
-        # Extract the labels (y)
-        y = np.array(hdf['labels'])
-
-    return X, y
+from src.data.download_data import download_s3_folder, load_data
 
 
 def instantiate_dataset(X, y):
@@ -50,7 +37,7 @@ def instantiate_dataset(X, y):
     Returns:
         A dataset object of the specified type.
     """
-    full_data = ResNet18_Dataset(X, y)
+    full_dataset = ResNet18_Dataset(X, y)
     return full_dataset
 
 
@@ -133,7 +120,7 @@ def instantiate_model(config):
     nbands = config["n bands"]
 
     if module_type in ["resnet18"]:
-        return module_dict[module_type](nbands)
+        return ResNet18Module(nbands)
 
 
 def instantiate_loss(config):
@@ -151,7 +138,7 @@ def instantiate_loss(config):
 
     print("Entre dans la fonction instantiate_loss")
     loss_type = config["loss"]
-    
+
     if loss_type == "crossentropy":
         return nn.CrossEntropyLoss()
 
@@ -234,7 +221,7 @@ def run_pipeline(run_name):
     with open("../config.yml") as f:
         config = yaml.load(f, Loader=SafeLoader)
 
-    batch_size_test = config["batch size test"]
+    download_s3_folder()
 
     X, y = load_data()
 
@@ -284,7 +271,7 @@ def run_pipeline(run_name):
 
             model = light_module.model
 
-            accuracy, precision, recall, f1 = metric_quality(test_dl, model)
+            accuracy, precision, recall, f1 = metrics_quality(test_dl, model)
             mlflow.log_metric("accuracy", accuracy)
             mlflow.log_metric("precision", precision)
             mlflow.log_metric("recall", recall)
@@ -309,7 +296,7 @@ def run_pipeline(run_name):
 
         model = light_module.model
 
-        accuracy, precision, recall, f1 = metric_quality(test_dl, model)
+        accuracy, precision, recall, f1 = metrics_quality(test_dl, model)
         print(f"Accuracy: {accuracy:.2f}")
         print(f"Precision: {precision:.2f}")
         print(f"Recall: {recall:.2f}")
