@@ -20,14 +20,14 @@ class ResNet50Module(nn.Module):
         for each class.
     """
 
-    def __init__(self):
+    def __init__(self, nbands=6):
         super().__init__()
         # Charger ResNet18 pré-entraîné
         self.model = models.resnet18(weights=ResNet18_Weights.DEFAULT)
         
         # Adapter la première couche pour accepter 6 canaux
         self.model.conv1 = nn.Conv2d(
-            6,
+            nbands,
             model.conv1.out_channels,
             kernel_size=model.conv1.kernel_size,
             stride=(1, 1),  # Réduire le stride pour limiter la réduction spatiale

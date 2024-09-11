@@ -6,7 +6,7 @@ from torch import nn, optim
 from src.optim.evaluation_model import calculate_pourcentage_loss, proportion_ones
 
 
-class ClassificationModule(pl.LightningModule):
+class ResNet18Module(pl.LightningModule):
 
     """
     Pytorch Lightning Module for ResNet50.
@@ -60,7 +60,7 @@ class ClassificationModule(pl.LightningModule):
             batch_idx (int): batch index.
         Returns: Tensor
         """
-        images, labels, dic = batch
+        images, labels = batch
         output = self.forward(images)
 
         output = output.to(device)
@@ -90,7 +90,7 @@ class ClassificationModule(pl.LightningModule):
         """
 
         # TODO 99% Identique à training step, à optim
-        images, labels, dic = batch
+        images, labels = batch
         output = self.forward(images)
 
         output = output.to(device)
@@ -121,7 +121,7 @@ class ClassificationModule(pl.LightningModule):
         Returns: Tensor
         """
         # TODO 99% Identique à training step, à optim
-        images, labels, dic = batch
+        images, labels = batch
         output = self.forward(images)
 
         output = output.to(device)
