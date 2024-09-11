@@ -4,8 +4,6 @@ import sys
 import torch.nn as nn
 
 import mlflow
-import numpy as np
-import pandas as pd
 import pytorch_lightning as pl
 import torch
 import yaml
@@ -14,30 +12,31 @@ from pytorch_lightning.callbacks import (
     LearningRateMonitor,
     ModelCheckpoint,
 )
-from torch.utils.data import DataLoader, WeightedRandomSampler
-from tqdm import tqdm
+from torch.utils.data import DataLoader
 from yaml.loader import SafeLoader
 
 from optim.optimizer import generate_optimization_elements
 
-from src.data.handle_dataset import generate_transform
-from src.data.prepare_data import balance_data, split_data
-from src.data.components import ResNet18_Dataset
-from src.models.resnet18_module import ResNet18Module
+from data.handle_dataset import generate_transform
+from data.prepare_data import crop_and_balance_data, split_data
+from data.components.resnet18_dataset import ResNet18_Dataset
+from models.resnet18_module import ResNet18LightningModule
+from models.components.resnet18_model import ResNet18Module
 
-from src.optim.evaluation_model import metrics_quality
+from optim.evaluation_model import metrics_quality
 
-from src.data.download_data import download_s3_folder, load_data
+from data.download_data import download_s3_folder, load_data
 
 
-def instantiate_dataset(X, y):
+def instantiate_dataset(X, y, config):
     """
     Instantiates the appropriate dataset object.
 
     Returns:
         A dataset object of the specified type.
     """
-    full_dataset = ResNet18_Dataset(X, y)
+    if config['module'] == "resnet18":
+        full_dataset = ResNet18_Dataset(X, y)
     return full_dataset
 
 
@@ -60,27 +59,29 @@ def instantiate_dataloader(X, y, config):
     The data loader for the testing dataset.
     """
 
-    print("Entre dans la fonction instantiate_dataloader")
+    print("*****Entre dans la fonction instantiate_dataloader*****")
 
-    print("Balance and split data")
+    print("*****Balance and split data*****")
 
-    X_balanced, y_balanced = balance_data(X, y)
+    X_balanced, y_balanced = crop_and_balance_data(X, y, config['len data'], config['prop zeros'])
 
-    (X_train, y_train), (X_val, y_val), (X_test, y_test) = split_data(X_balanced, y_balanced, config['prop_zeros'])
+    (X_train, y_train), (X_val, y_val), (X_test, y_test) = split_data(
+        X_balanced, y_balanced, config['train prop'], config['val prop'], config['test prop']
+        )
 
-    print("Instantiate dataset")
+    print("*****Instantiate dataset*****")
 
     # Retrieving the desired Dataset class
     train_dataset = instantiate_dataset(
-        X_train, y_train
+        X_train, y_train, config
     )
 
     valid_dataset = instantiate_dataset(
-        X_val, y_val
+        X_val, y_val, config
     )
 
     test_dataset = instantiate_dataset(
-        X_test, y_test
+        X_test, y_test, config
     )
 
     t_aug, t_preproc = generate_transform(
@@ -119,7 +120,7 @@ def instantiate_model(config):
     module_type = config["module"]
     nbands = config["n bands"]
 
-    if module_type in ["resnet18"]:
+    if module_type == "resnet18":
         return ResNet18Module(nbands)
 
 
@@ -160,7 +161,7 @@ def instantiate_lightning_module(config):
     list_params = generate_optimization_elements(config)
 
     if config['module'] == "resnet18":
-        LightningModule = ResNet18Module
+        LightningModule = ResNet18LightningModule
 
     lightning_module = LightningModule(
         model=instantiate_model(config),
@@ -173,6 +174,7 @@ def instantiate_lightning_module(config):
     )
 
     return lightning_module
+
 
 def instantiate_trainer(config, lightning_module):
     """
@@ -248,7 +250,7 @@ def run_pipeline(run_name):
         with mlflow.start_run(run_name=run_name):
             mlflow.autolog()
             mlflow.log_artifact(
-                "config.yml",
+                "../config.yml",
                 artifact_path="config.yml"
             )
             for key, value in config.items():
@@ -258,7 +260,7 @@ def run_pipeline(run_name):
 
             light_module = light_module.load_from_checkpoint(
                 loss=instantiate_loss(config),
-                checkpoint_path=trainer.checkpoint_callback.best_model_path, #je créé un module qui charge
+                checkpoint_path=trainer.checkpoint_callback.best_model_path,
                 model=light_module.model,
                 optimizer=light_module.optimizer,
                 optimizer_params=light_module.optimizer_params,

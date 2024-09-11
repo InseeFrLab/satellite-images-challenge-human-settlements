@@ -17,8 +17,8 @@ def generate_optimization_elements(config):
 
     optimizer = torch.optim.Adam
     optimizer_params = {
-        "lr": config["optim"]["lr"],
-        "momentum": config["optim"]["momentum"],
+        "lr": config["lr"],
+        "momentum": config["momentum"],
     }
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau
     scheduler_params = {}
@@ -31,5 +31,3 @@ def generate_optimization_elements(config):
         scheduler_params,
         scheduler_interval,
     )
-
- 

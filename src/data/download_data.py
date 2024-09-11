@@ -1,11 +1,13 @@
 import s3fs
 import os
+import h5py
+import numpy as np
 
 
 def download_s3_folder(
     bucket_name='projet-slums-detection/',
     s3_folder='challenge_mexique/',
-    local_dir='data/'
+    local_dir='../data/'
 ):
     """
     Télécharge tous les fichiers d'un dossier S3 dans un répertoire local.
@@ -14,7 +16,7 @@ def download_s3_folder(
     :param s3_folder: Chemin du dossier sur S3 à télécharger.
     :param local_dir: Chemin local où télécharger les fichiers.
     """
-        
+    print("*****Téléchargement des données*****")
     fs = s3fs.S3FileSystem(
         client_kwargs={"endpoint_url": f'https://{os.environ["AWS_S3_ENDPOINT"]}'},
         key=os.environ["AWS_ACCESS_KEY_ID"],
@@ -32,14 +34,17 @@ def download_s3_folder(
         if not os.path.exists(local_file_dir):
             os.makedirs(local_file_dir)
 
+        if not os.path.exists(local_file_path):
             print(f"Téléchargement de {file} vers {local_file_path}")
             fs.get(file, local_file_path)
+
         else:
-            print("Le fichier {file} a déjà été téléchargé")
+            print(f"Le fichier {file} a déjà été téléchargé ici {local_file_path}")
 
 
 def load_data():
-    hdf5_file = "data/train_data.h5"
+    print("*****Ouverture des données*****")
+    hdf5_file = "../data/train_data.h5"
 
     with h5py.File(hdf5_file, 'r') as hdf:
         # Extract the images (X)
