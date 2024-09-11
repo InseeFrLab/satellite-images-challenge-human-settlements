@@ -15,4 +15,4 @@ val prop: 0.2
 test prop: 0.2
 accumulate batch : 3
 
-mlflow: False
+mlflow: True
