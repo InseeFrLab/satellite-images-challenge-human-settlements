@@ -3,10 +3,10 @@ from typing import Dict, Union
 import pytorch_lightning as pl
 import torch
 from torch import nn, optim
-from src.optim.evaluation_model import calculate_pourcentage_loss, proportion_ones
+from optim.evaluation_model import proportion_ones
 
 
-class ResNet18Module(pl.LightningModule):
+class ResNet18LightningModule(pl.LightningModule):
 
     """
     Pytorch Lightning Module for ResNet50.
@@ -52,7 +52,7 @@ class ResNet18Module(pl.LightningModule):
         """
         return self.model(batch)
 
-    def training_step(self, batch, batch_idx, device="cpu"):
+    def training_step(self, batch, batch_idx, device="cuda:0"):
         """
         Training step.
         Args:
@@ -80,7 +80,7 @@ class ResNet18Module(pl.LightningModule):
 
         return loss
 
-    def validation_step(self, batch, batch_idx, device="cpu"):
+    def validation_step(self, batch, batch_idx, device="cuda:0"):
         """
         Validation step.
         Args:
@@ -103,16 +103,14 @@ class ResNet18Module(pl.LightningModule):
 
         loss = self.loss(output, targets_one_hot)
 
-        loss_pourcentage = calculate_pourcentage_loss(output, labels)
         prop_ones = proportion_ones(labels)
 
         self.log("validation_loss", loss, on_epoch=True)
-        self.log("validation_missclassed", loss_pourcentage, on_epoch=True)
         print(prop_ones)
 
         return loss
 
-    def test_step(self, batch, batch_idx, device="cpu"):
+    def test_step(self, batch, batch_idx, device="cuda:0"):
         """
         Test step.
         Args:

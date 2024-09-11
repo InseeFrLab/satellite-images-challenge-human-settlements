@@ -1,6 +1,7 @@
 n bands: 6
 augmentation: False
-prop_zeros: 0.5
+prop zeros: 0.5
+len data: 50000
 
 loss: "crossentropy"
 lr: 0.0001
@@ -8,7 +9,8 @@ momentum: 0.9
 module: "resnet18"
 batch size: 8
 batch size test: 8
-max epochs: 20
+max epochs: 1
+train prop: 0.6
 val prop: 0.2
 test prop: 0.2
 accumulate batch : 3
