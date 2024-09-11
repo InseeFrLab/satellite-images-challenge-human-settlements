@@ -42,15 +42,16 @@ def download_s3_folder(
             print(f"Le fichier {file} a déjà été téléchargé ici {local_file_path}")
 
 
-def load_data():
+def load_data(filepath="../data/train_data.h5", has_labels=True):
     print("*****Ouverture des données*****")
-    hdf5_file = "../data/train_data.h5"
 
-    with h5py.File(hdf5_file, 'r') as hdf:
+    with h5py.File(filepath, 'r') as hdf:
         # Extract the images (X)
         X = np.array(hdf['images'])
-
-        # Extract the labels (y)
-        y = np.array(hdf['labels'])
+        if has_labels:
+            # Extract the labels (y)
+            y = np.array(hdf['labels'])
+        else:
+            y = np.zeros_like(X)
 
     return X, y

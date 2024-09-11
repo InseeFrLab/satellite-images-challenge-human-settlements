@@ -1,9 +1,10 @@
 n bands: 6
 augmentation: False
 prop zeros: 0.5
-len data: 50000
+len data limit: 1000
 
 loss: "crossentropy"
+optim: "adam"
 lr: 0.0001
 momentum: 0.9
 module: "resnet18"
