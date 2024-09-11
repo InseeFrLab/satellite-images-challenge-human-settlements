@@ -14,15 +14,28 @@ def generate_optimization_elements(config):
         scheduler, scheduler parameters, and scheduler interval.
 
     """
+    if config['optim'] == "adam":
+        optimizer = torch.optim.Adam
+        optimizer_params = {
+            "lr": config["lr"],
+        }
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau
+        scheduler_params = {
+            "mode": "min",  # Mode de réduction, soit "min" ou "max"
+            "factor": 0.1,  # Facteur par lequel le taux d'apprentissage sera multiplié
+            "patience": 10,  # Nombre d'époques sans amélioration avant de réduire le taux d'apprentissage
+        }
+        scheduler_interval = "epoch"
 
-    optimizer = torch.optim.Adam
-    optimizer_params = {
-        "lr": config["lr"],
-        "momentum": config["momentum"],
-    }
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau
-    scheduler_params = {}
-    scheduler_interval = "epoch"
+    elif config['optim'] == "sgd":
+        optimizer = torch.optim.SGD
+        optimizer_params = {
+            "lr": config["lr"],
+            "momentum": config["momentum"],
+        }
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau
+        scheduler_params = {}
+        scheduler_interval = "epoch"
 
     return (
         optimizer,

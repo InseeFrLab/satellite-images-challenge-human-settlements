@@ -57,7 +57,9 @@ class ResNet18_Dataset(Dataset):
 
         img = img.type(torch.float)
         label = label.type(torch.float)
-        return img, label
+        metadata = {"ID": idx}
+
+        return img, label, metadata
 
     def __len__(self):
         """

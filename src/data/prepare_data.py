@@ -5,13 +5,18 @@ from sklearn.utils import shuffle
 
 def crop_and_balance_data(X, y, sample_size=50000, prop_of_zeros=0.5):
     # Step 1: Ensure sample_size does not exceed the available data
-    if sample_size > len(y):
+
+    if not sample_size or sample_size == 'None':
+        X_sampled, y_sampled = X, y
+
+    elif sample_size > len(y):
         raise ValueError("Sample size exceeds the number of available data points")
 
-    # Step 2: Randomly sample the data
-    sampled_indices = np.random.choice(len(y), size=sample_size, replace=False)
-    X_sampled = X[sampled_indices]
-    y_sampled = y[sampled_indices]
+    else:
+        # Step 2: Randomly sample the data
+        sampled_indices = np.random.choice(len(y), size=sample_size, replace=False)
+        X_sampled = X[sampled_indices]
+        y_sampled = y[sampled_indices]
 
     # Step 3: Count the number of 1's in the sampled y
     num_ones = np.sum(y_sampled == 1)

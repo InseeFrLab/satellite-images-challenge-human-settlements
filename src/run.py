@@ -40,7 +40,7 @@ def instantiate_dataset(X, y, config):
     return full_dataset
 
 
-def instantiate_dataloader(X, y, config):
+def instantiate_dataloader(X, y, X_eval, y_eval, config):
     """
     Instantiates and returns the data loaders for
     training, validation, and testing datasets.
@@ -63,7 +63,9 @@ def instantiate_dataloader(X, y, config):
 
     print("*****Balance and split data*****")
 
-    X_balanced, y_balanced = crop_and_balance_data(X, y, config['len data'], config['prop zeros'])
+    X_balanced, y_balanced = crop_and_balance_data(
+        X=X, y=y, sample_size=config['len data limit'], prop_of_zeros=config['prop zeros']
+        )
 
     (X_train, y_train), (X_val, y_val), (X_test, y_test) = split_data(
         X_balanced, y_balanced, config['train prop'], config['val prop'], config['test prop']
@@ -84,6 +86,10 @@ def instantiate_dataloader(X, y, config):
         X_test, y_test, config
     )
 
+    eval_dataset = instantiate_dataset(
+        X_eval, y_eval, config
+    )
+
     t_aug, t_preproc = generate_transform(
         config['augmentation']
     )
@@ -91,19 +97,20 @@ def instantiate_dataloader(X, y, config):
     train_dataset.transforms = t_aug
     valid_dataset.transforms = t_preproc
     test_dataset.transforms = t_preproc
+    eval_dataset.transforms = t_preproc
 
     # Creation of the dataloaders
-    shuffle_bool = [True, False, False]
+    shuffle_bool = [True, False, False, False]
     batch_size = config["batch size"]
     batch_size_test = config["batch size test"]
 
-    train_dataloader, valid_dataloader, test_dataloader = [
+    train_dataloader, valid_dataloader, test_dataloader, eval_dataloader = [
         DataLoader(
-            ds, batch_size=size, shuffle=boolean, num_workers=0, drop_last=True
+            ds, batch_size=size, shuffle=boolean, num_workers=103, drop_last=True
         )
-        for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test])
+        for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset, eval_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test, batch_size_test])
     ]
-    return train_dataloader, valid_dataloader, test_dataloader
+    return train_dataloader, valid_dataloader, test_dataloader, eval_dataloader
 
 
 def instantiate_model(config):
@@ -173,7 +180,7 @@ def instantiate_lightning_module(config):
         scheduler_interval=list_params[4],
     )
 
-    return lightning_module
+    return lightning_module, LightningModule
 
 
 def instantiate_trainer(config, lightning_module):
@@ -226,14 +233,15 @@ def run_pipeline(run_name):
     download_s3_folder()
 
     X, y = load_data()
+    X_eval, y_eval = load_data("../data/test_data.h5")
 
-    train_dl, valid_dl, test_dl = instantiate_dataloader(X, y, config)
+    train_dl, valid_dl, test_dl, eval_dl = instantiate_dataloader(X, y, config)
 
     torch.cuda.empty_cache()
     gc.collect()
 
     # train_dl.dataset[0][0].shape
-    light_module = instantiate_lightning_module(config)
+    light_module, LightningModule = instantiate_lightning_module(config)
     trainer = instantiate_trainer(config, light_module)
 
     torch.cuda.empty_cache()
@@ -258,20 +266,13 @@ def run_pipeline(run_name):
 
             trainer.fit(light_module, train_dl, valid_dl)
 
-            light_module = light_module.load_from_checkpoint(
-                loss=instantiate_loss(config),
-                checkpoint_path=trainer.checkpoint_callback.best_model_path,
-                model=light_module.model,
-                optimizer=light_module.optimizer,
-                optimizer_params=light_module.optimizer_params,
-                scheduler=light_module.scheduler,
-                scheduler_params=light_module.scheduler_params,
-                scheduler_interval=light_module.scheduler_interval
-            )
+            checkpoint_path = trainer.checkpoint_callback.best_model_path
+            light_module_checkpoint = LightningModule.load_from_checkpoint(checkpoint_path)
+
             torch.cuda.empty_cache()
             gc.collect()
 
-            model = light_module.model
+            model = light_module_checkpoint.model
 
             accuracy, precision, recall, f1 = metrics_quality(test_dl, model)
             mlflow.log_metric("accuracy", accuracy)
@@ -282,21 +283,13 @@ def run_pipeline(run_name):
     else:
         trainer.fit(light_module, train_dl, valid_dl)
 
-        light_module = light_module.load_from_checkpoint(
-            loss=instantiate_loss(config),
-            checkpoint_path=trainer.checkpoint_callback.best_model_path,
-            model=light_module.model,
-            optimizer=light_module.optimizer,
-            optimizer_params=light_module.optimizer_params,
-            scheduler=light_module.scheduler,
-            scheduler_params=light_module.scheduler_params,
-            scheduler_interval=light_module.scheduler_interval
-        )
+        checkpoint_path = trainer.checkpoint_callback.best_model_path
+        light_module_checkpoint = LightningModule.load_from_checkpoint(checkpoint_path)
 
         torch.cuda.empty_cache()
         gc.collect()
 
-        model = light_module.model
+        model = light_module_checkpoint.model
 
         accuracy, precision, recall, f1 = metrics_quality(test_dl, model)
         print(f"Accuracy: {accuracy:.2f}")

@@ -1,16 +1,17 @@
 import torch
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
+from src.data.download_data import load_data
 
 def metrics_quality(test_dl, model):
     model.eval()
 
-    y_true_list, y_pred_list = []
+    y_true_list, y_pred_list = [], []
 
     for idx, batch in enumerate(test_dl):
 
-        images, labels = batch
+        images, labels, __ = batch
 
         model = model.to("cpu")
         images = images.to("cpu")
@@ -46,24 +47,44 @@ def metrics_quality(test_dl, model):
     return accuracy, precision, recall, f1
 
 
-def proportion_ones(labels):
-    """
-    Calculate the proportion of ones in the validation dataloader.
+def run_eval_data(eval_dl, model):
+    model.eval()
 
-    Args:
-        labels: the true classes
+    y_true_list, y_pred_list = [], []
 
-    """
+    for idx, batch in enumerate(eval_dl):
 
-    # Count the number of zeros
-    num_zeros = int(torch.sum(labels == 0))
+        images, labels, metadata = batch
 
-    # Count the number of ones
-    num_ones = int(torch.sum(labels == 1))
+        model = model.to("cpu")
+        images = images.to("cpu")
+        labels = labels.to("cpu")
+        labels = labels.numpy()
 
-    prop_ones = num_ones / (num_zeros + num_ones)
+        y_true_list.append(labels)
 
-    # Rounded to two digits after the decimal point
-    prop_ones = round(prop_ones, 2)
+        output_model = model(images)
+        output_model = output_model.to("cpu")
+        probability_class_1 = output_model[:, 1]
 
-    return prop_ones
+        threshold = 0.50
+
+        predictions = torch.where(
+            probability_class_1 > threshold,
+            torch.tensor([1]),
+            torch.tensor([0]),
+        )
+        predicted_classes = predictions.type(torch.float)
+        predicted_classes = predicted_classes.numpy()
+
+        y_pred_list.append(predicted_classes)
+
+    y_true = np.concatenate(y_true_list, axis=0)
+    y_pred = np.concatenate(y_pred_list, axis=0)
+
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    f1 = f1_score(y_true, y_pred)
+
+    return accuracy, precision, recall, f1
