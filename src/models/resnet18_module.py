@@ -52,7 +52,7 @@ class ResNet18LightningModule(pl.LightningModule):
         """
         return self.model(batch)
 
-    def training_step(self, batch, batch_idx, device="cuda:0"):
+    def training_step(self, batch, batch_idx, device="cpu"):
         """
         Training step.
         Args:
@@ -80,7 +80,7 @@ class ResNet18LightningModule(pl.LightningModule):
 
         return loss
 
-    def validation_step(self, batch, batch_idx, device="cuda:0"):
+    def validation_step(self, batch, batch_idx, device="cpu"):
         """
         Validation step.
         Args:
@@ -110,7 +110,7 @@ class ResNet18LightningModule(pl.LightningModule):
 
         return loss
 
-    def test_step(self, batch, batch_idx, device="cuda:0"):
+    def test_step(self, batch, batch_idx, device="cpu"):
         """
         Test step.
         Args:

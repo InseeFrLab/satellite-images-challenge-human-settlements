@@ -12,15 +12,15 @@ def metrics_quality(test_dl, model):
 
         images, labels = batch
 
-        model = model.to("cuda:0")
-        images = images.to("cuda:0")
-        labels = labels.to("cuda:0")
+        model = model.to("cpu")
+        images = images.to("cpu")
+        labels = labels.to("cpu")
         labels = labels.numpy()
 
         y_true_list.append(labels)
 
         output_model = model(images)
-        output_model = output_model.to("cuda:0")
+        output_model = output_model.to("cpu")
         probability_class_1 = output_model[:, 1]
 
         threshold = 0.50
