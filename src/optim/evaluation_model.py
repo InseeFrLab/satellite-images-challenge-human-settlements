@@ -1,48 +1,46 @@
 import torch
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 
-def calculate_pourcentage_loss(output, labels):
-    """
-    Calculate the pourcentage of wrong predicted classes
-    based on output classification predictions of a model
-    and the true classes.
 
-    Args:
-        output: the output of the classification
-        labels: the true classes
+def metrics_quality(test_dl, model):
+    model.eval()
 
-    """
-    probability_class_1 = output[:, 1]
+    y_true_list, y_pred_list = []
 
-    # Set a threshold for class prediction
-    threshold = 0.50
+    for idx, batch in enumerate(test_dl):
 
-    # Make predictions based on the threshold
-    predictions = torch.where(probability_class_1 > threshold, torch.tensor([1]), torch.tensor([0]))
+        images, labels = batch
 
-    predicted_classes = predictions.type(torch.float)
+        model = model.to("cuda:0")
+        images = images.to("cuda:0")
+        labels = labels.to("cuda:0")
+        labels = predicted_classes.numpy()
 
-    misclassified_percentage = (predicted_classes != labels).float().mean()
+        y_true_list.append(labels)
 
-    return misclassified_percentage
+        output_model = model(images)
+        output_model = output_model.to("cpu")
+        probability_class_1 = output_model[:, 1]
 
-def proportion_ones(labels):
-    """
-    Calculate the proportion of ones in the validation dataloader.
+        threshold = 0.50
+        
+        predictions = torch.where(
+            probability_class_1 > threshold,
+            torch.tensor([1]),
+            torch.tensor([0]),
+        )
+        predicted_classes = predictions.type(torch.float)
+        predicted_classes = predicted_classes.numpy()
 
-    Args:
-        labels: the true classes
+        y_pred_list.append(predicted_classes)
 
-    """
+    y_true = np.concatenate(y_true_list, axis=0)
+    y_pred = np.concatenate(y_pred_list, axis=0)
 
-    # Count the number of zeros
-    num_zeros = int(torch.sum(labels == 0))
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    f1 = f1_score(y_true, y_pred)
 
-    # Count the number of ones
-    num_ones = int(torch.sum(labels == 1))
+    return accuracy, precision, recall, f1
 
-    prop_ones = num_ones / (num_zeros + num_ones)
-
-    # Rounded to two digits after the decimal point
-    prop_ones = round(prop_ones, 2)
-
-    return prop_ones

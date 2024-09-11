@@ -1,0 +1,7 @@
+h5py
+rasterio
+torch
+torchvision
+pytorch_lightning
+albumentations
+mlflow

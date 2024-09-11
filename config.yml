@@ -1,0 +1,16 @@
+n bands: 6
+augmentation: False
+prop_zeros: 0.5
+
+loss: "crossentropy"
+lr: 0.0001
+momentum: 0.9
+module: "resnet18"
+batch size: 8
+batch size test: 8
+max epochs: 20
+val prop: 0.2
+test prop: 0.2
+accumulate batch : 3
+
+mlflow: False
