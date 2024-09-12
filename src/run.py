@@ -1,5 +1,5 @@
 import sys
-from pipeline.pipeline_luncher import run_pipeline
+from pipeline.pipeline_launcher import run_pipeline
 
 
 if __name__ == "__main__":
