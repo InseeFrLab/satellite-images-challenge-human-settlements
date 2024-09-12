@@ -254,7 +254,7 @@ def run_pipeline(run_name):
     Runs the pipeline
     """
     # Open the file and load the file
-    with open("../config.yml") as f:
+    with open("config.yml") as f:
         config = yaml.load(f, Loader=SafeLoader)
 
     download_s3_folder()
@@ -293,7 +293,7 @@ def run_pipeline(run_name):
         with mlflow.start_run(run_name=run_name):
             mlflow.autolog()
             mlflow.log_artifact(
-                "../config.yml",
+                "config.yml",
                 artifact_path="donnees"
             )
             for key, value in config.items():
