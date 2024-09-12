@@ -23,7 +23,7 @@ def instantiate_dataset(X, y, config, ids_dict=None):
         A dataset object of the specified type.
     """
     if config['module'] == "resnet18":
-        full_dataset = ResNet18_Dataset(X, y, ids=ids_dict)
+        full_dataset = ResNet18_Dataset(X, y, ids=ids_dict, device=config['device'])
     return full_dataset
 
 
@@ -140,7 +140,10 @@ def instantiate_model(config):
     nbands = config["n bands"]
 
     if module_type == "resnet18":
-        return ResNet18Module(nbands)
+        if config['device'] == "cuda":
+            return ResNet18Module(nbands).cuda()
+        else:
+            return ResNet18Module(nbands)
 
 
 def instantiate_loss(config):

@@ -71,8 +71,8 @@ class ResNet18LightningModule(pl.LightningModule):
         images, labels, __ = batch
         output = self.forward(images)
 
-        output = output.to("cpu")
-        labels = labels.to("cpu")
+        output = output.to("cuda")
+        labels = labels.to("cuda")
 
         target = labels.long()
 
@@ -109,8 +109,8 @@ class ResNet18LightningModule(pl.LightningModule):
         images, labels, __ = batch
         output = self.forward(images)
 
-        output = output.to("cpu")
-        labels = labels.to("cpu")
+        output = output.to("cuda")
+        labels = labels.to("cuda")
 
         target = labels.long()
 
@@ -147,8 +147,8 @@ class ResNet18LightningModule(pl.LightningModule):
         images, labels, __ = batch
         output = self.forward(images)
 
-        output = output.to("cpu")
-        labels = labels.to("cpu")
+        output = output.to("cuda")
+        labels = labels.to("cuda")
 
         target = labels.long()
 
