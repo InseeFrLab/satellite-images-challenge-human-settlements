@@ -113,7 +113,7 @@ def generate_data_for_train(X, y, config):
     else:
         len_images = config['len data limit']
 
-    output_path_json = f"../data/retained_indices/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
+    output_path_json = f"../data/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
 
     if os.path.exists(output_path_json):
         print("Indices already exist")

@@ -258,6 +258,7 @@ def run_pipeline(run_name):
         config = yaml.load(f, Loader=SafeLoader)
 
     download_s3_folder()
+    download_s3_folder(s3_folder='challenge_mexique/retained_indices/')
 
     X, y = load_data()
 
@@ -319,7 +320,7 @@ def run_pipeline(run_name):
             else:
                 len_images = config['len data limit']
 
-            output_path_json = f"../data/retained_indices/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
+            output_path_json = f"../data/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
 
             mlflow.log_artifact(
                 output_path_json,

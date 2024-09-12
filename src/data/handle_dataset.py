@@ -16,8 +16,6 @@ def generate_transform(augmentation, tile_size=16):
         A tuple containing the augmentation and preprocessing transforms.
 
     """
-    image_size = (tile_size, tile_size)
-
     transforms_preprocessing = album.Compose(
         [
             # album.Normalize(),
