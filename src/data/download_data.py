@@ -52,6 +52,6 @@ def load_data(filepath="../data/train_data.h5", has_labels=True):
             # Extract the labels (y)
             y = np.array(hdf['labels'])
         else:
-            y = np.zeros_like(X)
+            y = np.zeros(X.shape[0])
 
     return X, y
