@@ -2,6 +2,7 @@ import s3fs
 import os
 import h5py
 import numpy as np
+import json
 
 
 def download_s3_folder(
@@ -24,7 +25,7 @@ def download_s3_folder(
         token=os.environ["AWS_SESSION_TOKEN"],
     )
 
-    files = fs.ls(f"{bucket_name}/{s3_folder}")
+    files = fs.ls(f"{bucket_name}{s3_folder}")
 
     for file in files:
         file_path = file.replace(bucket_name+s3_folder, "")
@@ -39,7 +40,26 @@ def download_s3_folder(
             fs.get(file, local_file_path)
 
         else:
-            print(f"Le fichier {file} a déjà été téléchargé ici {local_file_path}")
+            if file.split('.')[-1] != "keep":
+                print(f"Le fichier {file} a déjà été téléchargé ici {local_file_path}")
+
+
+def upload_json_to_s3(json_data_raw, output_filename):
+    fs = s3fs.S3FileSystem(
+        client_kwargs={"endpoint_url": f'https://{os.environ["AWS_S3_ENDPOINT"]}'},
+        key=os.environ["AWS_ACCESS_KEY_ID"],
+        secret=os.environ["AWS_SECRET_ACCESS_KEY"],
+        token=os.environ["AWS_SESSION_TOKEN"],
+    )
+
+    bucket_name = 'projet-slums-detection/'
+    s3_folder = 'challenge_mexique/retained_indices/'
+    output_filepath = bucket_name+s3_folder+output_filename
+
+    json_data = json.dumps(json_data_raw)
+
+    with fs.open(output_filepath, 'w') as f:
+        f.write(json_data)
 
 
 def load_data(filepath="../data/train_data.h5", has_labels=True):
