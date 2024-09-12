@@ -23,7 +23,7 @@ def instantiate_dataset(X, y, config, ids_dict=None):
         A dataset object of the specified type.
     """
     if config['module'] == "resnet18":
-        full_dataset = ResNet18_Dataset(X, y, ids=ids_dict, device=config['device'])
+        full_dataset = ResNet18_Dataset(X, y, ids=ids_dict)
     return full_dataset
 
 
@@ -141,7 +141,7 @@ def instantiate_model(config):
 
     if module_type == "resnet18":
         if config['device'] == "cuda":
-            return ResNet18Module(nbands).cuda()
+            return ResNet18Module(nbands).to("cuda")
         else:
             return ResNet18Module(nbands)
 
@@ -193,6 +193,7 @@ def instantiate_lightning_module(config):
         scheduler=list_params[2],
         scheduler_params=list_params[3],
         scheduler_interval=list_params[4],
+        device=config['device']
     )
 
     return lightning_module, LightningModule

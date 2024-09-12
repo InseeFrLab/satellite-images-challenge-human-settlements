@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 import pytorch_lightning as pl
 import torch
@@ -28,6 +28,7 @@ class ResNet18LightningModule(pl.LightningModule):
         ],
         scheduler_params: Dict,
         scheduler_interval: str,
+        device: Optional[str] = "cpu"
     ):
         """
         Initialize TableNet Module.
@@ -50,6 +51,7 @@ class ResNet18LightningModule(pl.LightningModule):
         self.scheduler = scheduler
         self.scheduler_params = scheduler_params
         self.scheduler_interval = scheduler_interval
+        self.device = device
 
     def forward(self, batch):
         """
@@ -68,11 +70,14 @@ class ResNet18LightningModule(pl.LightningModule):
             batch_idx (int): batch index.
         Returns: Tensor
         """
+
         images, labels, __ = batch
+
+        images = images.to(self.device)
         output = self.forward(images)
 
-        output = output.to("cuda")
-        labels = labels.to("cuda")
+        output = output.to(self.device)
+        labels = labels.to(self.device)
 
         target = labels.long()
 
@@ -107,10 +112,12 @@ class ResNet18LightningModule(pl.LightningModule):
         Returns: Tensor
         """
         images, labels, __ = batch
+
+        images = images.to(self.device)
         output = self.forward(images)
 
-        output = output.to("cuda")
-        labels = labels.to("cuda")
+        output = output.to(self.device)
+        labels = labels.to(self.device)
 
         target = labels.long()
 
@@ -145,10 +152,12 @@ class ResNet18LightningModule(pl.LightningModule):
         Returns: Tensor
         """
         images, labels, __ = batch
+
+        images = images.to(self.device)
         output = self.forward(images)
 
-        output = output.to("cuda")
-        labels = labels.to("cuda")
+        output = output.to(self.device)
+        labels = labels.to(self.device)
 
         target = labels.long()
 
