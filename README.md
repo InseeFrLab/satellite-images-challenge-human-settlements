@@ -8,12 +8,12 @@ cd satellite-images-challenge-human-settlements/
 pip install -r requirements.txt
 ```
 
-Le notebook start_challenge.ipynb permet de prendre en main les données.
+Le notebook *notebooks/start_challenge.ipynb* permet de prendre en main les données.
 
 ## Lancer un entraînement
 
 Ouvrir un service vs-code-pytorch avec ou sans gpu en ayant accès au projet slums detection sur onyxia.
-Modifier le fichier **config.yml** pour l'adapter à l'entraînement souhaité en jouant sur les données en entrée et les hyperparamètres.
+Modifier le fichier **src/config.yml** pour l'adapter à l'entraînement souhaité en jouant sur les données en entrée et les hyperparamètres.
 Lancer l'entraînement :
 ```bash
 cd src/
