@@ -14,7 +14,6 @@ class ResNet18_Dataset(Dataset):
         X,
         y,
         ids: Optional[dict] = None,
-        device: Optional[str] = "cpu",
         transforms: Optional[Compose] = None,
     ):
         """
