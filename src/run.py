@@ -315,12 +315,12 @@ def run_pipeline(run_name):
             mlflow.log_metric("recall", recall)
             mlflow.log_metric("f1_score", f1)
 
-            if config['len data limit'] in [None, "None", 200000]:
-                len_images = 200000
+            if config['len data limit'] in [None, "None"]:
+                len_images = 1100000
             else:
                 len_images = config['len data limit']
 
-            output_path_json = f"../data/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
+            output_path_json = f"../data/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}_{int(config['prop zeros']*100)}.json"
 
             mlflow.log_artifact(
                 output_path_json,
