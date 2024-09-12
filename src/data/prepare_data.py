@@ -108,12 +108,12 @@ def split_data(X, y, indices, train_size=0.6, val_size=0.2, test_size=0.2):
 
 def generate_data_for_train(X, y, config):
     print("*****Generate data for train*****")
-    if config['len data limit'] in [None, "None", 200000]:
-        len_images = 200000
+    if config['len data limit'] in [None, "None", 1100000]:
+        len_images = len(y)
     else:
         len_images = config['len data limit']
 
-    output_path_json = f"../data/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
+    output_path_json = f"../data/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}_{int(config['prop zeros']*100)}.json"
 
     if os.path.exists(output_path_json):
         print("Indices already exist")

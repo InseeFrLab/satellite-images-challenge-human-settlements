@@ -1,7 +1,7 @@
 n bands: 6
 augmentation: False
 prop zeros: 0.5
-len data limit: 1000
+len data limit: None
 
 loss: "crossentropy"
 optim: "adam"
@@ -10,11 +10,11 @@ momentum: 0.9
 module: "resnet18"
 batch size: 8
 batch size test: 8
-max epochs: 1
+max epochs: 40
 train prop: 0.6
 val prop: 0.2
 test prop: 0.2
 accumulate batch : 3
 
-samplesubmission: False
+samplesubmission: True
 mlflow: True
