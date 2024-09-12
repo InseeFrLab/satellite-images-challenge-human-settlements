@@ -20,7 +20,7 @@ from yaml.loader import SafeLoader
 from optim.optimizer import generate_optimization_elements
 
 from data.handle_dataset import generate_transform
-from data.prepare_data import crop_and_balance_data, split_data
+from data.prepare_data import generate_data_for_train
 from data.components.resnet18_dataset import ResNet18_Dataset
 from models.resnet18_module import ResNet18LightningModule
 from models.components.resnet18_model import ResNet18Module
@@ -63,15 +63,7 @@ def instantiate_dataloader(X, y, config):
 
     print("*****Entre dans la fonction instantiate_dataloader*****")
 
-    print("*****Balance and split data*****")
-
-    X_balanced, y_balanced, retained_indices = crop_and_balance_data(
-        X=X, y=y, sample_size=config['len data limit'], prop_of_zeros=config['prop zeros']
-        )
-
-    (X_train, y_train), (X_val, y_val), (X_test, y_test) = split_data(
-        X_balanced, y_balanced, config['train prop'], config['val prop'], config['test prop']
-        )
+    (X_train, y_train, indices_train), (X_val, y_val, indices_val), (X_test, y_test, indices_test) = generate_data_for_train(X, y, config)
 
     print("*****Instantiate dataset*****")
 
@@ -107,7 +99,7 @@ def instantiate_dataloader(X, y, config):
         )
         for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test])
     ]
-    return train_dataloader, valid_dataloader, test_dataloader, retained_indices
+    return (train_dataloader, valid_dataloader, test_dataloader), (indices_train, indices_val, indices_test)
 
 
 def instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict):
@@ -269,7 +261,9 @@ def run_pipeline(run_name):
 
     X, y = load_data()
 
-    train_dl, valid_dl, test_dl, retained_indices = instantiate_dataloader(X, y, config)
+    dataloaders, indices_retained = instantiate_dataloader(X, y, config)
+    train_dl, valid_dl, test_dl = dataloaders
+    indices_train, indices_val, indices_test = indices_retained
 
     # Evaluation
     X_eval, y_eval = load_data("../data/test_data.h5", has_labels=False)
@@ -320,38 +314,38 @@ def run_pipeline(run_name):
             mlflow.log_metric("recall", recall)
             mlflow.log_metric("f1_score", f1)
 
-            eval_submission = run_eval_data(eval_dl, model)
+            if config['len data limit'] in [None, "None", 200000]:
+                len_images = 200000
+            else:
+                len_images = config['len data limit']
 
-            submission_df = pd.DataFrame(list(eval_submission.items()), columns=["id", "class"])
-
-            # Sauvegarder en fichier CSV
-            output_path = "../data/SampleSubmissionPredicted.csv"
-            submission_df.to_csv(output_path, index=False)
-
-            pourcentage_class_1_eval = (submission_df['class'] == 1).sum()*100/len(submission_df)
-
-            mlflow.log_metric("pourcentage_class_1_eval", pourcentage_class_1_eval)
-
-            mlflow.log_artifact(
-                output_path,
-                artifact_path="donnees"
-            )
-
-            if os.path.exists(output_path):
-                os.remove(output_path)
-
-            output_path_json = "../data/retained_indices.json"
-            retained_indices_json = {"indices_retenus": retained_indices.tolist()}
-            with open(output_path_json, "w") as f:
-                json.dump(retained_indices_json, f)
+            output_path_json = f"../data/retained_indices/retained_indices_{int(config['train prop']*100)}_{int(config['val prop']*100)}_{int(config['test prop']*100)}_{len_images}.json"
 
             mlflow.log_artifact(
                 output_path_json,
                 artifact_path="donnees"
             )
 
-            if os.path.exists(output_path_json):
-                os.remove(output_path_json)
+            if config['samplesubmission']:
+                eval_submission = run_eval_data(eval_dl, model)
+
+                submission_df = pd.DataFrame(list(eval_submission.items()), columns=["id", "class"])
+
+                # Sauvegarder en fichier CSV
+                output_path = "../data/SampleSubmissionPredicted.csv"
+                submission_df.to_csv(output_path, index=False)
+
+                pourcentage_class_1_eval = (submission_df['class'] == 1).sum()*100/len(submission_df)
+
+                mlflow.log_metric("pourcentage_class_1_eval", pourcentage_class_1_eval)
+
+                mlflow.log_artifact(
+                    output_path,
+                    artifact_path="donnees"
+                )
+
+                if os.path.exists(output_path):
+                    os.remove(output_path)
 
     else:
         trainer.fit(light_module, train_dl, valid_dl)
@@ -370,22 +364,19 @@ def run_pipeline(run_name):
         print(f"Recall: {recall:.2f}")
         print(f"F1 Score: {f1:.2f}")
 
-        eval_submission = run_eval_data(eval_dl, model)
+        if config['samplesubmission']:
 
-        submission_df = pd.DataFrame(list(eval_submission.items()), columns=["id", "class"])
+            eval_submission = run_eval_data(eval_dl, model)
 
-        pourcentage_class_1_eval = (submission_df['class'] == 1).sum()*100/len(submission_df)
+            submission_df = pd.DataFrame(list(eval_submission.items()), columns=["id", "class"])
 
-        print(f"Il y a {round(pourcentage_class_1_eval)}% d'images prédites '1' dans le jeu de test du challenge")
+            pourcentage_class_1_eval = (submission_df['class'] == 1).sum()*100/len(submission_df)
 
-        # Sauvegarder en fichier CSV
-        output_path = "../data/SampleSubmissionPredicted.csv"
-        submission_df.to_csv(output_path, index=False)
+            print(f"Il y a {round(pourcentage_class_1_eval)}% d'images prédites '1' dans le jeu de test du challenge")
 
-        output_path_json = "../data/retained_indices.json"
-        retained_indices_json = {"indices_retenus": retained_indices.tolist()}
-        with open(output_path_json, "w") as f:
-            json.dump(retained_indices_json, f)
+            # Sauvegarder en fichier CSV
+            output_path = "../data/SampleSubmissionPredicted.csv"
+            submission_df.to_csv(output_path, index=False)
 
 
 if __name__ == "__main__":
