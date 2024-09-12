@@ -8,10 +8,9 @@ def crop_and_balance_data(X, y, sample_size=50000, prop_of_zeros=0.5):
 
     if not sample_size or sample_size == 'None':
         X_sampled, y_sampled = X, y
-
+        sampled_indices = np.arange(len(y))  # Keep all indices
     elif sample_size > len(y):
         raise ValueError("Sample size exceeds the number of available data points")
-
     else:
         # Step 2: Randomly sample the data
         sampled_indices = np.random.choice(len(y), size=sample_size, replace=False)
@@ -26,7 +25,7 @@ def crop_and_balance_data(X, y, sample_size=50000, prop_of_zeros=0.5):
     zeros_indices = np.where(y_sampled == 0)[0]
 
     # Step 5: Randomly sample the same number of 0's as there are 1's
-    balanced_zero_indices = np.random.choice(zeros_indices, int(int(num_ones)*prop_of_zeros/(1-prop_of_zeros)), replace=False)
+    balanced_zero_indices = np.random.choice(zeros_indices, int(num_ones * prop_of_zeros / (1 - prop_of_zeros)), replace=False)
 
     # Step 6: Combine indices of 0's and 1's
     balanced_indices = np.concatenate([ones_indices, balanced_zero_indices])
@@ -35,6 +34,9 @@ def crop_and_balance_data(X, y, sample_size=50000, prop_of_zeros=0.5):
     X_balanced = X_sampled[balanced_indices]
     y_balanced = y_sampled[balanced_indices]
 
+    # Create a list of original indices that are retained
+    retained_indices = sampled_indices[balanced_indices]
+
     # Display the number of 0's and 1's in the balanced y
     print(f"Number of 1's in balanced y: {np.sum(y_balanced == 1)}")
     print(f"Number of 0's in balanced y: {np.sum(y_balanced == 0)}")
@@ -42,7 +44,7 @@ def crop_and_balance_data(X, y, sample_size=50000, prop_of_zeros=0.5):
     # Shuffle both X_balanced and y_balanced together
     X_balanced, y_balanced = shuffle(X_balanced, y_balanced, random_state=1)
 
-    return X_balanced, y_balanced
+    return X_balanced, y_balanced, retained_indices
 
 
 def split_data(X, y, train_size=0.6, val_size=0.2, test_size=0.2):

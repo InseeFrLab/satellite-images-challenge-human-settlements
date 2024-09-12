@@ -2,6 +2,8 @@ import gc
 import os
 import sys
 import torch.nn as nn
+import pandas as pd
+import json
 
 import mlflow
 import pytorch_lightning as pl
@@ -23,12 +25,12 @@ from data.components.resnet18_dataset import ResNet18_Dataset
 from models.resnet18_module import ResNet18LightningModule
 from models.components.resnet18_model import ResNet18Module
 
-from optim.evaluation_model import metrics_quality
+from optim.evaluation_model import metrics_quality, run_eval_data
 
 from data.download_data import download_s3_folder, load_data
 
 
-def instantiate_dataset(X, y, config):
+def instantiate_dataset(X, y, config, ids_dict=None):
     """
     Instantiates the appropriate dataset object.
 
@@ -36,11 +38,11 @@ def instantiate_dataset(X, y, config):
         A dataset object of the specified type.
     """
     if config['module'] == "resnet18":
-        full_dataset = ResNet18_Dataset(X, y)
+        full_dataset = ResNet18_Dataset(X, y, ids=ids_dict)
     return full_dataset
 
 
-def instantiate_dataloader(X, y, X_eval, y_eval, config):
+def instantiate_dataloader(X, y, config):
     """
     Instantiates and returns the data loaders for
     training, validation, and testing datasets.
@@ -63,7 +65,7 @@ def instantiate_dataloader(X, y, X_eval, y_eval, config):
 
     print("*****Balance and split data*****")
 
-    X_balanced, y_balanced = crop_and_balance_data(
+    X_balanced, y_balanced, retained_indices = crop_and_balance_data(
         X=X, y=y, sample_size=config['len data limit'], prop_of_zeros=config['prop zeros']
         )
 
@@ -86,10 +88,6 @@ def instantiate_dataloader(X, y, X_eval, y_eval, config):
         X_test, y_test, config
     )
 
-    eval_dataset = instantiate_dataset(
-        X_eval, y_eval, config
-    )
-
     t_aug, t_preproc = generate_transform(
         config['augmentation']
     )
@@ -97,20 +95,57 @@ def instantiate_dataloader(X, y, X_eval, y_eval, config):
     train_dataset.transforms = t_aug
     valid_dataset.transforms = t_preproc
     test_dataset.transforms = t_preproc
-    eval_dataset.transforms = t_preproc
 
     # Creation of the dataloaders
-    shuffle_bool = [True, False, False, False]
+    shuffle_bool = [True, False, False]
     batch_size = config["batch size"]
     batch_size_test = config["batch size test"]
 
-    train_dataloader, valid_dataloader, test_dataloader, eval_dataloader = [
+    train_dataloader, valid_dataloader, test_dataloader = [
         DataLoader(
             ds, batch_size=size, shuffle=boolean, num_workers=103, drop_last=True
         )
-        for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset, eval_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test, batch_size_test])
+        for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test])
     ]
-    return train_dataloader, valid_dataloader, test_dataloader, eval_dataloader
+    return train_dataloader, valid_dataloader, test_dataloader, retained_indices
+
+
+def instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict):
+    """
+    Instantiates and returns the data loaders for
+    training, validation, and testing datasets.
+
+    Args:
+    - X_eval: images
+    - y_eval: labels
+    - config (dict)
+
+    Returns:
+    - eval_dataloader (torch.utils.data.DataLoader):
+    The data loader for the evluation dataset.
+    """
+
+    print("*****Entre dans la fonction instantiate_dataloader_eval*****")
+
+    # Retrieving the desired Dataset class
+    eval_dataset = instantiate_dataset(
+        X_eval, y_eval, config, ids_dict
+    )
+
+    __, t_preproc = generate_transform(
+        config['augmentation']
+    )
+
+    eval_dataset.transforms = t_preproc
+
+    # Creation of the dataloaders
+    batch_size_test = config["batch size test"]
+
+    eval_dataloader = DataLoader(
+            eval_dataset, batch_size=batch_size_test, shuffle=False, num_workers=103, drop_last=True
+        )
+
+    return eval_dataloader
 
 
 def instantiate_model(config):
@@ -233,9 +268,14 @@ def run_pipeline(run_name):
     download_s3_folder()
 
     X, y = load_data()
-    X_eval, y_eval = load_data("../data/test_data.h5")
 
-    train_dl, valid_dl, test_dl, eval_dl = instantiate_dataloader(X, y, config)
+    train_dl, valid_dl, test_dl, retained_indices = instantiate_dataloader(X, y, config)
+
+    # Evaluation
+    X_eval, y_eval = load_data("../data/test_data.h5", has_labels=False)
+    df = pd.read_csv('../data/id_map.csv')
+    ids_dict = dict(zip(df['ID'], df['id']))
+    eval_dl = instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict)
 
     torch.cuda.empty_cache()
     gc.collect()
@@ -259,7 +299,7 @@ def run_pipeline(run_name):
             mlflow.autolog()
             mlflow.log_artifact(
                 "../config.yml",
-                artifact_path="config.yml"
+                artifact_path="donnees"
             )
             for key, value in config.items():
                 mlflow.log_param(key, value)
@@ -280,6 +320,39 @@ def run_pipeline(run_name):
             mlflow.log_metric("recall", recall)
             mlflow.log_metric("f1_score", f1)
 
+            eval_submission = run_eval_data(eval_dl, model)
+
+            submission_df = pd.DataFrame(list(eval_submission.items()), columns=["id", "class"])
+
+            # Sauvegarder en fichier CSV
+            output_path = "../data/SampleSubmissionPredicted.csv"
+            submission_df.to_csv(output_path, index=False)
+
+            pourcentage_class_1_eval = (submission_df['class'] == 1).sum()*100/len(submission_df)
+
+            mlflow.log_metric("pourcentage_class_1_eval", pourcentage_class_1_eval)
+
+            mlflow.log_artifact(
+                output_path,
+                artifact_path="donnees"
+            )
+
+            if os.path.exists(output_path):
+                os.remove(output_path)
+
+            output_path_json = "../data/retained_indices.json"
+            retained_indices_json = {"indices_retenus": retained_indices.tolist()}
+            with open(output_path_json, "w") as f:
+                json.dump(retained_indices_json, f)
+
+            mlflow.log_artifact(
+                output_path_json,
+                artifact_path="donnees"
+            )
+
+            if os.path.exists(output_path_json):
+                os.remove(output_path_json)
+
     else:
         trainer.fit(light_module, train_dl, valid_dl)
 
@@ -296,6 +369,23 @@ def run_pipeline(run_name):
         print(f"Precision: {precision:.2f}")
         print(f"Recall: {recall:.2f}")
         print(f"F1 Score: {f1:.2f}")
+
+        eval_submission = run_eval_data(eval_dl, model)
+
+        submission_df = pd.DataFrame(list(eval_submission.items()), columns=["id", "class"])
+
+        pourcentage_class_1_eval = (submission_df['class'] == 1).sum()*100/len(submission_df)
+
+        print(f"Il y a {round(pourcentage_class_1_eval)}% d'images prédites '1' dans le jeu de test du challenge")
+
+        # Sauvegarder en fichier CSV
+        output_path = "../data/SampleSubmissionPredicted.csv"
+        submission_df.to_csv(output_path, index=False)
+
+        output_path_json = "../data/retained_indices.json"
+        retained_indices_json = {"indices_retenus": retained_indices.tolist()}
+        with open(output_path_json, "w") as f:
+            json.dump(retained_indices_json, f)
 
 
 if __name__ == "__main__":

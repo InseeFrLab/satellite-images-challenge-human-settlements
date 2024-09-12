@@ -1,6 +1,4 @@
-from typing import List, Optional
-
-import numpy as np
+from typing import Optional
 import torch
 from albumentations import Compose
 from torch.utils.data import Dataset
@@ -15,6 +13,7 @@ class ResNet18_Dataset(Dataset):
         self,
         X,
         y,
+        ids: Optional[dict] = None,
         transforms: Optional[Compose] = None,
     ):
         """
@@ -27,6 +26,7 @@ class ResNet18_Dataset(Dataset):
         """
         self.X = X
         self.y = y
+        self.ids = ids
         self.transforms = transforms
 
     def __getitem__(self, idx):
@@ -57,7 +57,12 @@ class ResNet18_Dataset(Dataset):
 
         img = img.type(torch.float)
         label = label.type(torch.float)
-        metadata = {"ID": idx}
+        if self.ids and idx in self.ids.keys():
+            id_image = self.ids[idx]
+        else:
+            id_image = idx
+
+        metadata = {"ID": idx, "id": id_image}
 
         return img, label, metadata
 
