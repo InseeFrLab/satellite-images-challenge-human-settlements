@@ -1,4 +1,4 @@
-from typing import Dict, Union, Optional
+from typing import Dict, Union
 
 import pytorch_lightning as pl
 import torch
@@ -28,7 +28,6 @@ class ResNet18LightningModule(pl.LightningModule):
         ],
         scheduler_params: Dict,
         scheduler_interval: str,
-        device: Optional[str] = "cpu"
     ):
         """
         Initialize TableNet Module.
@@ -51,7 +50,6 @@ class ResNet18LightningModule(pl.LightningModule):
         self.scheduler = scheduler
         self.scheduler_params = scheduler_params
         self.scheduler_interval = scheduler_interval
-        self.device = device
 
     def forward(self, batch):
         """
@@ -60,6 +58,8 @@ class ResNet18LightningModule(pl.LightningModule):
             batch (tensor): Batch of images to perform forward-pass.
         Returns (Tuple[tensor, tensor]): Table, Column prediction.
         """
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        self.model = self.model.to(device)
         return self.model(batch)
 
     def training_step(self, batch, batch_idx):
@@ -70,21 +70,27 @@ class ResNet18LightningModule(pl.LightningModule):
             batch_idx (int): batch index.
         Returns: Tensor
         """
-
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
         images, labels, __ = batch
 
-        images = images.to(self.device)
+        images = images.to(device)
+        labels = labels.to(device)
+
         output = self.forward(images)
 
-        output = output.to(self.device)
-        labels = labels.to(self.device)
+        output = output.to(device)
 
         target = labels.long()
+        target = target.to(device)
 
         targets_one_hot = torch.zeros(target.shape[0], 2)
+        targets_one_hot = targets_one_hot.to(device)
         targets_one_hot = targets_one_hot.scatter_(1, target.unsqueeze(1), 1)
 
         loss = self.loss(output, targets_one_hot)
+
+        target = target.to("cpu")
+        output = output.to("cpu")
 
         threshold = 0.5
         predicted_labels = (output >= threshold).long()  # Convert probabilities to binary predictions
@@ -111,20 +117,27 @@ class ResNet18LightningModule(pl.LightningModule):
             batch_idx (int): batch index.
         Returns: Tensor
         """
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
         images, labels, __ = batch
 
-        images = images.to(self.device)
+        images = images.to(device)
+        labels = labels.to(device)
+
         output = self.forward(images)
 
-        output = output.to(self.device)
-        labels = labels.to(self.device)
-
+        output = output.to(device)
         target = labels.long()
 
+        target = target.to(device)
+
         targets_one_hot = torch.zeros(target.shape[0], 2)
+        targets_one_hot = targets_one_hot.to(device)
         targets_one_hot = targets_one_hot.scatter_(1, target.unsqueeze(1), 1)
 
         loss = self.loss(output, targets_one_hot)
+
+        target = target.to("cpu")
+        output = output.to("cpu")
 
         threshold = 0.5
         predicted_labels = (output >= threshold).long()  # Convert probabilities to binary predictions
@@ -151,20 +164,28 @@ class ResNet18LightningModule(pl.LightningModule):
             batch_idx (int): batch index.
         Returns: Tensor
         """
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
         images, labels, __ = batch
 
-        images = images.to(self.device)
+        images = images.to(device)
+        labels = labels.to(device)
+
         output = self.forward(images)
 
-        output = output.to(self.device)
-        labels = labels.to(self.device)
+        output = output.to(device)
 
         target = labels.long()
 
+        target = target.to(device)
+
         targets_one_hot = torch.zeros(target.shape[0], 2)
+        targets_one_hot = targets_one_hot.to(device)
         targets_one_hot = targets_one_hot.scatter_(1, target.unsqueeze(1), 1)
 
         loss = self.loss(output, targets_one_hot)
+
+        target = target.to("cpu")
+        output = output.to("cpu")
 
         threshold = 0.5
         predicted_labels = (output >= threshold).long()  # Convert probabilities to binary predictions
