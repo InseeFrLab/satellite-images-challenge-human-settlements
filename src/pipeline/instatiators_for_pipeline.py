@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import (
     EarlyStopping,
@@ -139,11 +140,10 @@ def instantiate_model(config):
     module_type = config["module"]
     nbands = config["n bands"]
 
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
     if module_type == "resnet18":
-        if config['device'] == "cuda":
-            return ResNet18Module(nbands).to("cuda")
-        else:
-            return ResNet18Module(nbands)
+        return ResNet18Module(nbands).to(device)
 
 
 def instantiate_loss(config):
@@ -193,7 +193,6 @@ def instantiate_lightning_module(config):
         scheduler=list_params[2],
         scheduler_params=list_params[3],
         scheduler_interval=list_params[4],
-        device=config['device']
     )
 
     return lightning_module, LightningModule
