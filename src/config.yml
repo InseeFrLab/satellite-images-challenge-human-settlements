@@ -15,7 +15,6 @@ train prop: 0.6
 val prop: 0.2
 test prop: 0.2
 accumulate batch : 3
-device: "cuda"
 
 samplesubmission: True
 mlflow: True
