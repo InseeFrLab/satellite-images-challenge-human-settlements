@@ -4,7 +4,7 @@ from albumentations import Compose
 from torch.utils.data import Dataset
 
 
-class ResNet18_Dataset(Dataset):
+class ClassificationDataset(Dataset):
     """
     Custom Dataset class.
     """

@@ -19,3 +19,28 @@ Lancer l'entraînement :
 cd src/
 python run.py "nom_du_run_mlflow_choisi"
 ```
+
+Configurations possibles :
+    - bands: List[int] *bandes à conserver pour l'entraînement, entre 0 et 5 compris (par défaut, toutes les bandes = [0, 1, 2, 3, 4, 5])*  
+    - augmentation: boolean *data augmentation*  
+    - prop zeros: *entre 0 et 1, par défaut 0.5*  
+    - len data limit: int *entre 0 et 1.1 million, par défaut None (pas de limite)*    
+
+    - loss: *au choix dans ["crossentropy", "bce"]*  
+    - optim: *au choix dans ["adam", "sgd"]*  
+    - lr: *learning rate, par défaut 0.01*  
+    - momentum: *par défaut 0.9*  
+    - module: *au choix dans ["mobilenet_v2", "mobilenet_v3_small", "resnet18", "resnet34", "vgg11", "vgg11_bn"]*  
+    - batch size: *par défaut 128*  
+    - batch size test: *par défaut 128*  
+    - max epochs: *par défaut 100*    
+
+    - train prop: *par défaut 0.6*   
+    - val prop: *par défaut 0.2*  
+    - test prop: *par défaut 0.2*  
+    - accumulate batch : *par défaut 3*  
+
+    - samplesubmission: boolean *générer le fichier à soumettre pour le challenge, par défaut True*  
+    - mlflow: boolean *utiliser mlflow, par défaut True*  
+
+
