@@ -7,7 +7,8 @@ from sklearn.metrics import (
         recall_score,
         precision_score,
         accuracy_score,
-        f1_score
+        f1_score,
+        roc_auc_score
     )
 
 
@@ -195,12 +196,14 @@ class ResNet18LightningModule(pl.LightningModule):
         recall = recall_score(target, predictions)
         accuracy = accuracy_score(target, predictions)
         f1 = f1_score(target, predictions)
+        auc = roc_auc_score(target, predictions)
 
         self.log("test_loss", loss, on_epoch=True)
         self.log("test_precision", precision, on_epoch=True)
         self.log("test_recall", recall, on_epoch=True)
         self.log("test_accuracy", accuracy, on_epoch=True)
         self.log("test_f1_score", f1, on_epoch=True)
+        self.log("test_accuracy", auc, on_epoch=True)
 
         return loss
 

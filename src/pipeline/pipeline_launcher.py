@@ -76,11 +76,12 @@ def run_pipeline(run_name):
 
             model = light_module_checkpoint.model
 
-            accuracy, precision, recall, f1 = metrics_quality(test_dl, model)
+            accuracy, precision, recall, f1, auc = metrics_quality(test_dl, model)
             mlflow.log_metric("accuracy", accuracy)
             mlflow.log_metric("precision", precision)
             mlflow.log_metric("recall", recall)
             mlflow.log_metric("f1_score", f1)
+            mlflow.log_metric("auc", auc)
 
             if config['len data limit'] in [None, "None"]:
                 len_images = 1100000
@@ -126,11 +127,12 @@ def run_pipeline(run_name):
 
         model = light_module_checkpoint.model
 
-        accuracy, precision, recall, f1 = metrics_quality(test_dl, model)
+        accuracy, precision, recall, f1, auc = metrics_quality(test_dl, model)
         print(f"Accuracy: {accuracy:.2f}")
         print(f"Precision: {precision:.2f}")
         print(f"Recall: {recall:.2f}")
         print(f"F1 Score: {f1:.2f}")
+        print(f"AUC: {auc:.2f}")
 
         if config['samplesubmission']:
 

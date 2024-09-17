@@ -117,10 +117,8 @@ def instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict):
     eval_dataset.transforms = t_preproc
 
     # Creation of the dataloaders
-    batch_size_test = config["batch size test"]
-
     eval_dataloader = DataLoader(
-            eval_dataset, batch_size=batch_size_test, shuffle=False, num_workers=103, drop_last=True
+            eval_dataset, batch_size=64, shuffle=False, num_workers=103, drop_last=True
         )
 
     return eval_dataloader
@@ -164,6 +162,9 @@ def instantiate_loss(config):
 
     if loss_type == "crossentropy":
         return nn.CrossEntropyLoss()
+
+    elif loss_type == "bce":
+        return nn.BCELoss()
 
 
 def instantiate_lightning_module(config):
