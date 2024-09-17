@@ -27,14 +27,16 @@ def run_pipeline(run_name):
     download_s3_folder()
     download_s3_folder(s3_folder='challenge_mexique/retained_indices/')
 
-    X, y = load_data()
+    X, y = load_data(bands=config["bands"])
 
     dataloaders, indices_retained = instantiate_dataloader(X, y, config)
     train_dl, valid_dl, test_dl = dataloaders
     indices_train, indices_val, indices_test = indices_retained
 
     # Evaluation
-    X_eval, y_eval = load_data("../data/test_data.h5", has_labels=False)
+    X_eval, y_eval = load_data(
+        bands=config["bands"], filepath="../data/test_data.h5", has_labels=False
+        )
     df = pd.read_csv('../data/id_map.csv')
     ids_dict = dict(zip(df['ID'], df['id']))
     eval_dl = instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict)

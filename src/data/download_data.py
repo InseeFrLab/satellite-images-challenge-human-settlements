@@ -62,7 +62,7 @@ def upload_json_to_s3(json_data_raw, output_filename):
         f.write(json_data)
 
 
-def load_data(filepath="../data/train_data.h5", has_labels=True):
+def load_data(bands=[0, 1, 2], filepath="../data/train_data.h5", has_labels=True):
     print("*****Ouverture des données*****")
 
     with h5py.File(filepath, 'r') as hdf:
@@ -74,4 +74,4 @@ def load_data(filepath="../data/train_data.h5", has_labels=True):
         else:
             y = np.zeros(X.shape[0])
 
-    return X, y
+    return X[:, :, :, bands], y
