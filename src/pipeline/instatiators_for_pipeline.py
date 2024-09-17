@@ -136,7 +136,7 @@ def instantiate_model(config):
     """
     print("Entre dans la fonction instantiate_model")
     module_type = config["module"]
-    nbands = config["n bands"]
+    nbands = len(config["bands"])
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 

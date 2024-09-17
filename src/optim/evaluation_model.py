@@ -8,8 +8,6 @@ from sklearn.metrics import (
     roc_auc_score
 )
 
-from data.download_data import load_data
-
 
 def metrics_quality(test_dl, model):
     print("***** Calcul de métriques de qualité sur le jeu de test *****")
