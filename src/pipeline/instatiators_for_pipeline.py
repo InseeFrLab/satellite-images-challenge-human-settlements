@@ -11,21 +11,24 @@ from optim.optimizer import generate_optimization_elements
 
 from data.handle_dataset import generate_transform
 from data.prepare_data import generate_data_for_train
-from data.components.resnet18_dataset import ResNet18_Dataset
-from models.resnet18_module import ResNet18LightningModule
+from data.components.classification_dataset import ClassificationDataset
+from models.classification_module import ClassificationLightningModule
 from models.components.resnet18_model import ResNet18Module
+from models.components.mobilenet_v2_model import MobileNetV2Module
+from models.components.mobilenet_v3_small_model import MobileNetV3SmallModule
+from models.components.resnet34_model import ResNet34Module
+from models.components.vgg11_model import VGG11Module
+from models.components.vgg11_bn_model import VGG11BNModule
 
 
-def instantiate_dataset(X, y, config, ids_dict=None):
-    """
-    Instantiates the appropriate dataset object.
-
-    Returns:
-        A dataset object of the specified type.
-    """
-    if config['module'] == "resnet18":
-        full_dataset = ResNet18_Dataset(X, y, ids=ids_dict)
-    return full_dataset
+models_dict = {
+    "mobilenet_v2": MobileNetV2Module,
+    "resnet18": ResNet18Module,
+    "mobilenet_v3_small": MobileNetV3SmallModule,
+    "resnet34": ResNet34Module,
+    "vgg11": VGG11Module,
+    "vgg11_bn": VGG11BNModule
+}
 
 
 def instantiate_dataloader(X, y, config):
@@ -54,16 +57,16 @@ def instantiate_dataloader(X, y, config):
     print("*****Instantiate dataset*****")
 
     # Retrieving the desired Dataset class
-    train_dataset = instantiate_dataset(
-        X_train, y_train, config
+    train_dataset = ClassificationDataset(
+        X_train, y_train
     )
 
-    valid_dataset = instantiate_dataset(
-        X_val, y_val, config
+    valid_dataset = ClassificationDataset(
+        X_val, y_val
     )
 
-    test_dataset = instantiate_dataset(
-        X_test, y_test, config
+    test_dataset = ClassificationDataset(
+        X_test, y_test
     )
 
     t_aug, t_preproc = generate_transform(
@@ -106,8 +109,8 @@ def instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict):
     print("*****Entre dans la fonction instantiate_dataloader_eval*****")
 
     # Retrieving the desired Dataset class
-    eval_dataset = instantiate_dataset(
-        X_eval, y_eval, config, ids_dict
+    eval_dataset = ClassificationDataset(
+        X_eval, y_eval, ids_dict
     )
 
     __, t_preproc = generate_transform(
@@ -140,8 +143,11 @@ def instantiate_model(config):
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-    if module_type == "resnet18":
-        return ResNet18Module(nbands).to(device)
+    if module_type in models_dict:
+        model = models_dict[module_type]
+        return model(nbands).to(device)
+    else:
+        print(f"Le modèle {module_type} n'a pas été implémenté")
 
 
 def instantiate_loss(config):
@@ -183,9 +189,8 @@ def instantiate_lightning_module(config):
     print("Entre dans la fonction instantiate_lighting_module")
     list_params = generate_optimization_elements(config)
 
-    if config['module'] == "resnet18":
-        LightningModule = ResNet18LightningModule
-
+    LightningModule = ClassificationLightningModule
+    
     lightning_module = LightningModule(
         model=instantiate_model(config),
         loss=instantiate_loss(config),

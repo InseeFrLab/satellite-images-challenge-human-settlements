@@ -1,6 +1,7 @@
 import albumentations as album
 from albumentations.pytorch.transforms import ToTensorV2
 
+
 def generate_transform(augmentation, tile_size=16):
     """
     Generates PyTorch transforms for data augmentation and preprocessing\

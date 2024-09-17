@@ -7,7 +7,7 @@ loss: "bce"
 optim: "adam"
 lr: 0.001
 momentum: 0.9
-module: "resnet18"
+module: "vgg11_bn"
 batch size: 128
 batch size test: 128
 max epochs: 100

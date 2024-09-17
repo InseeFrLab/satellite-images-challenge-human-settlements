@@ -12,7 +12,7 @@ from sklearn.metrics import (
     )
 
 
-class ResNet18LightningModule(pl.LightningModule):
+class ClassificationLightningModule(pl.LightningModule):
 
     """
     Pytorch Lightning Module for ResNet18.
