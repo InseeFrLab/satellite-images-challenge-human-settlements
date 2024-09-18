@@ -33,7 +33,7 @@ class ResNet18Module(nn.Module):
             kernel_size=self.model.conv1.kernel_size,
             stride=(1, 1),  # Réduire le stride pour limiter la réduction spatiale
             padding=self.model.conv1.padding,
-            bias=self.model.conv1.bias,
+            bias=False,
         )
 
         # Supprimer MaxPool pour éviter une réduction de taille trop rapide

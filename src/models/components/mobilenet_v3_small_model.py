@@ -31,7 +31,7 @@ class MobileNetV3SmallModule(nn.Module):
             kernel_size=self.model.features[0][0].kernel_size,
             stride=(1, 1),  # Réduire le stride pour limiter la réduction spatiale
             padding=self.model.features[0][0].padding,
-            bias=self.model.features[0][0].bias,
+            bias=False,
         )
 
         # Remplacer la dernière couche fully connected pour une sortie binaire (2 classes)
