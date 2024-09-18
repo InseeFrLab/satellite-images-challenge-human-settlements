@@ -20,7 +20,8 @@ cd src/
 python run.py "nom_du_run_mlflow_choisi"
 ```
 
-Configurations possibles :
+Configurations possibles :  
+
     - bands: List[int] *bandes à conserver pour l'entraînement, entre 0 et 5 compris (par défaut, toutes les bandes = [0, 1, 2, 3, 4, 5])*  
     - augmentation: boolean *data augmentation*  
     - prop zeros: *entre 0 et 1, par défaut 0.5*  
