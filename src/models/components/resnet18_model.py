@@ -11,9 +11,9 @@ multiprocessing.set_sharing_strategy("file_system")
 
 class ResNet18Module(nn.Module):
     """
-    Finetuned ResNet50 model for binary classification.
+    Finetuned ResNet18 model for binary classification.
 
-    The model is based on the ResNet50 architecture and has been trained on a
+    The model is based on the ResNet18 architecture and has been trained on a
     specific task to classify inputs into two labels.
 
     Returns:
