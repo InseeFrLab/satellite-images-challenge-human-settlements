@@ -30,9 +30,8 @@ class VGG11BNModule(nn.Module):
             nbands,
             self.model.features[0].out_channels,
             kernel_size=self.model.features[0].kernel_size,
-            stride=(1, 1),  # Réduire le stride pour limiter la réduction spatiale
+            stride=self.model.features[0].stride,
             padding=self.model.features[0].padding,
-            bias=True if self.model.features[0].bias is not None else False,  # Correction ici
         )
 
         # Remplacer la dernière couche fully connected pour une sortie binaire (2 classes)
