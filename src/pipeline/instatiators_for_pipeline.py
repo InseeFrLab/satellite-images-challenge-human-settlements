@@ -32,10 +32,8 @@ models_dict = {
 
 losses_dict = {
     "crossentropy": nn.CrossEntropyLoss,
-    "bce": nn.BCEWithLogitsLoss,
-    "nll": nn.NLLLoss,
-    "marginranking": nn.MarginRankingLoss,
-    "hingeembedding": nn.HingeEmbeddingLoss
+    "bce": nn.BCELoss,
+    "bcelogits": nn.BCEWithLogitsLoss,
 }
 
 

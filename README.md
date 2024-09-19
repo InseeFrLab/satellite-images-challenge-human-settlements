@@ -27,7 +27,7 @@ Configurations possibles :
     - prop zeros: *entre 0 et 1, par défaut 0.5*  
     - len data limit: int *entre 0 et 1.1 million, par défaut None (pas de limite)*    
 
-    - loss: *au choix dans ['crossentropy', 'bce', 'nll', 'marginranking', 'hingeembedding']*  
+    - loss: *au choix dans ['crossentropy', 'bce', 'bcelogits']* 
     - optim: *au choix dans ["adam", "sgd"]*  
     - lr: *learning rate, par défaut 0.01*  
     - momentum: *par défaut 0.9*  
