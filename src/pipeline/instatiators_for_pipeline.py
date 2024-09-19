@@ -175,7 +175,7 @@ def instantiate_loss(config):
     loss_type = config["loss"]
 
     if loss_type in losses_dict:
-        return models_dict[loss_type]()
+        return losses_dict[loss_type]()
     else:
         print(f"La loss {loss_type} n'a pas été implémenté")
 
