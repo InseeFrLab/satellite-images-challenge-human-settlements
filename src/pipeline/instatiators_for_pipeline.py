@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 import pytorch_lightning as pl
+
 from pytorch_lightning.callbacks import (
     EarlyStopping,
     LearningRateMonitor,
@@ -19,6 +20,9 @@ from models.components.mobilenet_v3_small_model import MobileNetV3SmallModule
 from models.components.resnet34_model import ResNet34Module
 from models.components.vgg11_model import VGG11Module
 from models.components.vgg11_bn_model import VGG11BNModule
+from models.components.resnet18_wv1_model import ResNet18WV1Module
+from models.components.efficientnetb0_model import EfficientNetB0Module
+from models.components.densenet121_model import DenseNet121Module
 
 
 models_dict = {
@@ -27,14 +31,16 @@ models_dict = {
     "mobilenet_v3_small": MobileNetV3SmallModule,
     "resnet34": ResNet34Module,
     "vgg11": VGG11Module,
-    "vgg11_bn": VGG11BNModule
+    "vgg11_bn": VGG11BNModule,
+    "resnet18_wv1": ResNet18WV1Module,
+    "efficientnetb0": EfficientNetB0Module,
+    "densenet121": DenseNet121Module
 }
 
 
 def instantiate_dataloader(X, y, config):
     """
-    Instantiates and returns the data loaders for
-    training, validation, and testing datasets.
+    Instantiates and returns the data loaders for training, validation, and testing datasets.
 
     Args:
     - X: images
@@ -42,32 +48,21 @@ def instantiate_dataloader(X, y, config):
     - config (dict)
 
     Returns:
-    - train_dataloader (torch.utils.data.DataLoader):
-    The data loader for the training dataset.
-    - valid_dataloader (torch.utils.data.DataLoader):
-    The data loader for the validation dataset.
-    - test_dataloader (torch.utils.data.DataLoader):
-    The data loader for the testing dataset.
+    - dataloaders (tuple of DataLoader): training, validation, and testing data loaders
+    - indices_retained (tuple of indices): indices of training, validation, and testing sets
     """
 
-    print("*****Entre dans la fonction instantiate_dataloader*****")
+    print("*****CHANGES : Entre dans la fonction instantiate_dataloader*****")
 
+    # Séparer les données en ensembles d'entraînement, de validation et de test
     (X_train, y_train, indices_train), (X_val, y_val, indices_val), (X_test, y_test, indices_test) = generate_data_for_train(X, y, config)
 
     print("*****Instantiate dataset*****")
 
     # Retrieving the desired Dataset class
-    train_dataset = ClassificationDataset(
-        X_train, y_train
-    )
-
-    valid_dataset = ClassificationDataset(
-        X_val, y_val
-    )
-
-    test_dataset = ClassificationDataset(
-        X_test, y_test
-    )
+    train_dataset = ClassificationDataset(X_train, y_train)
+    valid_dataset = ClassificationDataset(X_val, y_val)
+    test_dataset = ClassificationDataset(X_test, y_test)
 
     t_aug, t_preproc = generate_transform(
         config['augmentation']
@@ -84,10 +79,12 @@ def instantiate_dataloader(X, y, config):
 
     train_dataloader, valid_dataloader, test_dataloader = [
         DataLoader(
-            ds, batch_size=size, shuffle=boolean, num_workers=103, drop_last=True
+            ds, batch_size=size, shuffle=boolean, num_workers=72, drop_last=True
         )
         for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test])
     ]
+
+    # Returning the dataloaders and the indices for further use
     return (train_dataloader, valid_dataloader, test_dataloader), (indices_train, indices_val, indices_test)
 
 
@@ -121,7 +118,7 @@ def instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict):
 
     # Creation of the dataloaders
     eval_dataloader = DataLoader(
-            eval_dataset, batch_size=64, shuffle=False, num_workers=103, drop_last=True
+            eval_dataset, batch_size=64, shuffle=False, num_workers=72, drop_last=True
         )
 
     return eval_dataloader
@@ -200,6 +197,9 @@ def instantiate_lightning_module(config):
         scheduler_params=list_params[3],
         scheduler_interval=list_params[4],
     )
+
+    # Sauvegarde des hyperparamètres, en ignorant le modèle
+    lightning_module.save_hyperparameters(ignore=['model'])
 
     return lightning_module, LightningModule
 
