@@ -30,6 +30,14 @@ models_dict = {
     "vgg11_bn": VGG11BNModule
 }
 
+losses_dict = {
+    "crossentropy": nn.CrossEntropyLoss,
+    "bce": nn.BCEWithLogitsLoss,
+    "nll": nn.NLLLoss,
+    "marginranking": nn.MarginRankingLoss,
+    "hingeembedding": nn.HingeEmbeddingLoss
+}
+
 
 def instantiate_dataloader(X, y, config):
     """
@@ -84,7 +92,7 @@ def instantiate_dataloader(X, y, config):
 
     train_dataloader, valid_dataloader, test_dataloader = [
         DataLoader(
-            ds, batch_size=size, shuffle=boolean, num_workers=103, drop_last=True
+            ds, batch_size=size, shuffle=boolean, num_workers=72, drop_last=True
         )
         for ds, boolean, size in zip([train_dataset, valid_dataset, test_dataset], shuffle_bool, [batch_size, batch_size, batch_size_test])
     ]
@@ -121,7 +129,7 @@ def instantiate_dataloader_eval(X_eval, y_eval, config, ids_dict):
 
     # Creation of the dataloaders
     eval_dataloader = DataLoader(
-            eval_dataset, batch_size=64, shuffle=False, num_workers=103, drop_last=True
+            eval_dataset, batch_size=64, shuffle=False, num_workers=72, drop_last=True
         )
 
     return eval_dataloader
@@ -166,11 +174,10 @@ def instantiate_loss(config):
     print("Entre dans la fonction instantiate_loss")
     loss_type = config["loss"]
 
-    if loss_type == "crossentropy":
-        return nn.CrossEntropyLoss()
-
-    elif loss_type == "bce":
-        return nn.BCELoss()
+    if loss_type in losses_dict:
+        return models_dict[loss_type]()
+    else:
+        print(f"La loss {loss_type} n'a pas été implémenté")
 
 
 def instantiate_lightning_module(config):
@@ -190,7 +197,7 @@ def instantiate_lightning_module(config):
     list_params = generate_optimization_elements(config)
 
     LightningModule = ClassificationLightningModule
-    
+
     lightning_module = LightningModule(
         model=instantiate_model(config),
         loss=instantiate_loss(config),

@@ -97,16 +97,10 @@ class ClassificationLightningModule(pl.LightningModule):
         predicted_labels = (output >= threshold).long()  # Convert probabilities to binary predictions
         predictions = torch.argmax(predicted_labels, dim=1)
 
-        # precision = precision_score(target, predictions)
-        # recall = recall_score(target, predictions)
-        # f1 = f1_score(target, predictions)
-        accuracy = accuracy_score(target, predictions)
+        auc = roc_auc_score(target, predictions)
 
         self.log("train_loss", loss, on_epoch=True)
-        # self.log("train_precision", precision, on_epoch=True)
-        # self.log("train_recall", recall, on_epoch=True)
-        # self.log("train_f1_score", f1, on_epoch=True)
-        self.log("train_accuracy", accuracy, on_epoch=True)
+        self.log("train_auc", auc, on_epoch=True)
 
         return loss
 
@@ -144,16 +138,10 @@ class ClassificationLightningModule(pl.LightningModule):
         predicted_labels = (output >= threshold).long()  # Convert probabilities to binary predictions
         predictions = torch.argmax(predicted_labels, dim=1)
 
-        # precision = precision_score(target, predictions)
-        # recall = recall_score(target, predictions)
-        # f1 = f1_score(target, predictions)
-        accuracy = accuracy_score(target, predictions)
+        auc = roc_auc_score(target, predictions)
 
         self.log("validation_loss", loss, on_epoch=True)
-        # self.log("validation_precision", precision, on_epoch=True)
-        # self.log("validation_recall", recall, on_epoch=True)
-        # self.log("validation_f1_score", f1, on_epoch=True)
-        self.log("validation_accuracy", accuracy, on_epoch=True)
+        self.log("validation_auc", auc, on_epoch=True)
 
         return loss
 
