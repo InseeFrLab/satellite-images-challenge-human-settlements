@@ -29,7 +29,7 @@ def generate_transform(augmentation, tile_size=16):
             [
                 album.HorizontalFlip(),
                 album.VerticalFlip(),
-                album.Rotate(limit=10),
+                # album.Rotate(limit=10),
                 # album.Normalize(),
                 ToTensorV2(),
             ]

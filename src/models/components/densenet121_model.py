@@ -1,18 +1,10 @@
 import torch
-import torch.multiprocessing as multiprocessing
 from torch import nn
 import torchvision.models as models
 from torchvision.models.densenet import DenseNet121_Weights
 
-# Increase the shared memory limit
-multiprocessing.set_sharing_strategy("file_system")
-
 
 class DenseNet121Module(nn.Module):
-    """
-    Finetuned DenseNet121 model for binary classification.
-    """
-
     def __init__(self, nbands=6):
         super().__init__()
         # Charger DenseNet121 pré-entraîné
@@ -23,7 +15,7 @@ class DenseNet121Module(nn.Module):
             nbands,
             self.model.features.conv0.out_channels,
             kernel_size=self.model.features.conv0.kernel_size,
-            stride=self.model.features.conv0.stride,
+            stride=(1, 1),
             padding=self.model.features.conv0.padding,
             bias=self.model.features.conv0.bias,
         )
