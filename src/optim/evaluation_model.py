@@ -76,7 +76,7 @@ def metrics_quality(test_dl, model):
 
     predicted_classes_best = predictions_best.tolist()
     accuracy_best = accuracy_score(y_true, predicted_classes_best)
-    precision_best = precision_score(y_true, predicted_classes_best)
+    precision_best = precision_score(y_true, predicted_classes_best, zero_division=0)
     recall_best = recall_score(y_true, predicted_classes_best)
     f1_best = f1_score(y_true, predicted_classes_best)
     auc_best = roc_auc_score(y_true, predicted_classes_best)
@@ -88,7 +88,7 @@ def metrics_quality(test_dl, model):
     )
     predicted_classes = predictions.tolist()
     accuracy = accuracy_score(y_true, predicted_classes)
-    precision = precision_score(y_true, predicted_classes)
+    precision = precision_score(y_true, predicted_classes, zero_division=0)
     recall = recall_score(y_true, predicted_classes)
     f1 = f1_score(y_true, predicted_classes)
     auc = roc_auc_score(y_true, predicted_classes)

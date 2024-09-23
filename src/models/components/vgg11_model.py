@@ -10,10 +10,7 @@ multiprocessing.set_sharing_strategy("file_system")
 
 class VGG11Module(nn.Module):
     """
-    Finetuned VGG11 model for binary classification.
-
-    The model is based on the VGG11 architecture and has been trained
-    to classify inputs into two labels.
+    Adapted VGG11 model for binary classification on 16x16x6 input data.
 
     Returns:
         torch.Tensor: The output tensor containing the probabilities
@@ -34,8 +31,33 @@ class VGG11Module(nn.Module):
             padding=self.model.features[0].padding,
         )
 
-        # Remplacer la dernière couche fully connected pour une sortie binaire (2 classes)
+        # Retirer les couches de MaxPool à la fin, car l'entrée est petite
+        self.model.features = nn.Sequential(
+            self.model.features[0],
+            self.model.features[1],
+            nn.Identity(),  # MaxPool
+            self.model.features[3],
+            self.model.features[4],
+            nn.Identity(),  # MaxPool
+            self.model.features[6],
+            self.model.features[7],
+            self.model.features[8],
+            self.model.features[9],
+            nn.Identity(),  # MaxPool
+            self.model.features[11],
+            self.model.features[12],
+            self.model.features[13],
+            self.model.features[14],
+            nn.Identity(),  # MaxPool
+            self.model.features[16],
+            self.model.features[17],
+            self.model.features[18],
+            self.model.features[19],
+            nn.Identity(),  # MaxPool
+        )
+
         self.model.classifier[6] = nn.Linear(self.model.classifier[6].in_features, 2)
+
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, input):
@@ -49,6 +71,6 @@ class VGG11Module(nn.Module):
             torch.Tensor: The output probabilities after applying the softmax activation.
         """
         output = self.model(input)
-        probabilities = torch.softmax(output, dim=1)
+        probabilities = self.softmax(output)
 
         return probabilities

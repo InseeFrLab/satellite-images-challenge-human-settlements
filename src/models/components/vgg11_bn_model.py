@@ -34,8 +34,40 @@ class VGG11BNModule(nn.Module):
             padding=self.model.features[0].padding,
         )
 
-        # Remplacer la dernière couche fully connected pour une sortie binaire (2 classes)
-        self.model.classifier[6] = nn.Linear(self.model.classifier[6].in_features, 2)
+        # Retirer les couches de MaxPool
+        self.model.features = nn.Sequential(
+            self.model.features[0],
+            self.model.features[1],
+            self.model.features[2],
+            self.model.features[4],
+            self.model.features[5],
+            self.model.features[6],
+            self.model.features[8],
+            self.model.features[9],
+            self.model.features[10],
+            self.model.features[12],
+            self.model.features[13],
+            self.model.features[14],
+            self.model.features[16],
+            self.model.features[17],
+            self.model.features[18],
+            self.model.features[20],
+            self.model.features[21],
+            self.model.features[22],
+            self.model.features[24],
+            self.model.features[25],
+            self.model.features[26],
+            self.model.features[28],
+        )
+
+        # Adapter la dernière couche fully connected pour une sortie binaire (2 classes)
+        self.model.classifier = nn.Sequential(
+            nn.Linear(512, 256),  # Ajustement pour correspondre à la taille de la sortie
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=0.5),
+            nn.Linear(256, 2),  # Sortie pour 2 classes
+        )
+
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, input):
@@ -49,6 +81,6 @@ class VGG11BNModule(nn.Module):
             torch.Tensor: The output probabilities after applying the softmax activation.
         """
         output = self.model(input)
-        probabilities = torch.softmax(output, dim=1)
+        probabilities = self.softmax(output)
 
         return probabilities

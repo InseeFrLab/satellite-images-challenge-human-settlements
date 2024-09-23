@@ -180,7 +180,7 @@ class ClassificationLightningModule(pl.LightningModule):
         predicted_labels = (output >= threshold).long()  # Convert probabilities to binary predictions
         predictions = torch.argmax(predicted_labels, dim=1)
 
-        precision = precision_score(target, predictions)
+        precision = precision_score(target, predictions, zero_division=0)
         recall = recall_score(target, predictions)
         accuracy = accuracy_score(target, predictions)
         f1 = f1_score(target, predictions)
