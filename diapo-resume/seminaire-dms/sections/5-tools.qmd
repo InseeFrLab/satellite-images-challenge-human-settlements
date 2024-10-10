@@ -1,0 +1,7 @@
+## Outils
+
+Datalab pour utiliser un GPU.
+
+MLflow pour surveiller les entraînements, les stocker et les comparer : [lien MLFLOW](https://projet-slums-detection-mlflow.user.lab.sspcloud.fr/).
+
+Template en python pour entraîner des modèles de Deep Learning facile à modifier et adaptée pour essayer plein de paramètres différents : [dépot git](https://github.com/InseeFrLab/satellite-images-challenge-human-settlements).

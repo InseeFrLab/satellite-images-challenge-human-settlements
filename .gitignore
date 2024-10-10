@@ -4,3 +4,5 @@ data/*
 !data/.keep
 .ipynb_checkpoints/
 lightning_logs/
+*.html
+index_files/

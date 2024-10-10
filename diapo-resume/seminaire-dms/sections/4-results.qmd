@@ -1,0 +1,23 @@
+## Résultats
+
+Meilleur entraînement :
+
+- un modèle ResNet18
+- une loss binary cross-entropy
+- 22 epochs
+- Fini en 5 minutes
+
+Métriques sur images test :
+
+- Accuracy : 0.81 
+- Precision : 0.81 
+- Recall : 0.82 
+- AUC : 0.81 
+
+---
+
+## Score obtenu lors du challenge
+
+Une fois le fichier à annoter soumis, on a obtenu :  **AUC = 0.76**
+
+Score du gagnant du challenge : **AUC = 0.86**

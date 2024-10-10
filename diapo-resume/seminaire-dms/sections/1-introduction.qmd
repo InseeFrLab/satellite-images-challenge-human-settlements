@@ -1,0 +1,12 @@
+## Contexte
+
+**INEGI** : Institut national des statistiques et de la Géographie au Mexique  
+
+![](img/inegi.png){width=30% fig-align="center"}  
+
+Besoin de détecter les zones d'occupation humaine au Mexique pour connaître la **croissance rapide du pays**.
+
+**Images satellites**: pour voir les zones sans faire déplacer des agents.
+
+**Méthode de détection automatisée** car à l'oeil nu c'est trop lent et coûteux.
+

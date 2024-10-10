@@ -1,0 +1,8 @@
+## Pistes d'amélioration
+
+- Meilleure compréhension des données pour trouver des solutions adaptées
+- Contrôle de la pertinence des annotations fournies
+
+---
+
+# Merci pour votre attention !

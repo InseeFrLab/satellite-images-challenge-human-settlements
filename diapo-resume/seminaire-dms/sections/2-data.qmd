@@ -1,0 +1,35 @@
+
+## Une image dans le jeu de données
+
+Images = empilement de plusieurs sources de données satellitaires (incompréhensibles à l'oeil nu)
+
+Une image dans le jeu de données fourni = une matrice de **16x16 pixels** avec 6 dimensions (ici les *bandes spectrales*)
+
+---
+
+## Bandes spectrales fournies
+
+Les différentes bandes :
+
+- Bleu
+- Vert
+- Rouge
+- Proche infrarouge (NIR)
+- Infrarouge à ondes courtes 1 (SWIR 1)
+- Infrarouge à ondes courtes 2 (SWIR 2)
+
+---
+
+## Bandes spectrales
+
+![](img/ondes.png){width=75% fig-align="center"}
+
+---
+
+## Jeu de données
+
+- 1,1M d'images annotées (1 si zone d'occupation humaine, 0 sinon) :
+    - 200 000 images annotées **1**
+    - 900 000 images annotées **0** 
+
+- Jeu d'images à annoter pour évaluation : **120 000 images**

@@ -1,0 +1,45 @@
+## Entraînement de modèle
+
+Entraîner un modèle de *Computer Vision* pour classifier automatiquement une image selon la présence ou non de zone d'occupation humaine :
+
+1. L'ensemble des données annoté est divisé en deux parties : **données d'entraînement** et **données de validation**
+   
+2. **Division en Batches** : Les données sont ensuite divisées en petits sous-ensembles appelés **batches**.
+
+---
+
+## Entraînement de modèle - bis
+
+3. À la fin de chaque batch, le modèle est validé sur les **données de validation** pour évaluer sa performance afin de s'améliorer
+
+4. **Plusieurs passages d'epochs** : Chaque epoch consiste à faire passer tous les batches dans le réseau de neurones
+
+Avoir un GPU pour faire tourner plus rapidement les entraînements.
+
+---
+
+## Prétraitement des données
+
+- Avoir un jeu de données **équilibré** : même nombre d'images 0 et 1
+- Jeu de données stables pour comparer les différents entraînements (toujours les mêmes) :
+    - 240 000 images entraînement
+    - 80 000 images validation
+    - 80 000 images test
+- Normaliser les images avec la moyenne
+
+---
+
+## Réseau de neurones et loss
+
+- Choisir un **modèle** adapté (réseau de neurones) et le **fine tuner** (le modifier pour nos données)
+- Sélectionner une **loss** : fonction qui calcule la perte entre les annotations qui représentent la vérité et les prédictions pendant l'entraînement (utilisé lors de l'étape de validation)
+- Surveiller les entraînements pour éviter le sur-apprentissage
+
+---
+
+
+## Evaluation des performances
+
+Les perfomances doivent être évalués sur des données qui n'ont pas servis à l'entraînement : **les images test**.
+
+Utilisation de métriques parlantes : accuracy, precision, recall, **AUC** (métrique utilisée par INEGI pour départager les entraînements des participants).

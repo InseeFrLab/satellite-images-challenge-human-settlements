@@ -1,0 +1,135 @@
+---
+title: "Challenge : détection automatisée de zones d'occupation humaines sur imagerie satellite"
+subtitle: |
+  **[Raya Berova & Mohamed Sekouri]{.orange}** 
+date: "10/10/2024"
+date-format: "D MMMM YYYY"
+slide-number: true
+# uncomment for French presentations:
+lang: fr-FR
+# for blind readers:
+slide-tone: false
+chalkboard: # press the B key to toggle chalkboard
+  theme: whiteboard
+# uncomment to use the multiplex mode:
+# multiplex: true
+format: revealjs
+revealjs:
+  transition: slide
+  slideNumber: true
+  theme: solarized
+controls: true
+css: ../custom.css
+ascii: true
+---
+
+
+# Plan de la présentation
+
+1️⃣ Contexte
+
+2️⃣ Les données
+
+3️⃣ Méthodologie
+
+4️⃣ Résultats obtenus
+
+5️⃣ Structure du projet
+
+6️⃣ Discussion
+
+# 1️⃣ Introduction
+
+{{< include sections/1-introduction.qmd >}}
+
+# Plan de la présentation
+
+1️⃣ Contexte
+
+**2️⃣ Les données**
+
+3️⃣ Méthodologie
+
+4️⃣ Résultats obtenus
+
+5️⃣ Structure du projet
+
+6️⃣ Discussion
+
+# 2️⃣ Les données
+
+{{< include sections/2-data.qmd >}}
+
+# Plan de la présentation
+
+1️⃣ Contexte
+
+2️⃣ Les données
+
+**3️⃣ Méthodologie**
+
+4️⃣ Résultats obtenus
+
+5️⃣ Structure du projet
+
+6️⃣ Discussion
+
+# 3️⃣ Méthodologie
+
+{{< include sections/3-methodo.qmd >}}
+
+# Plan de la présentation
+
+1️⃣ Contexte
+
+2️⃣ Les données
+
+3️⃣ Méthodologie
+
+**4️⃣ Résultats obtenus**
+
+5️⃣ Structure du projet
+
+6️⃣ Discussion
+
+# 4️⃣ Résultats obtenus
+
+{{< include sections/4-results.qmd >}}
+
+# Plan de la présentation
+
+1️⃣ Contexte
+
+2️⃣ Les données
+
+3️⃣ Méthodologie
+
+4️⃣ Résultats obtenus
+
+**5️⃣ Structure du projet**
+
+6️⃣ Discussion
+
+# 5️⃣ Structure du projet
+
+{{< include sections/5-tools.qmd >}}
+
+# Plan de la présentation
+
+1️⃣ Contexte
+
+2️⃣ Les données
+
+3️⃣ Méthodologie
+
+4️⃣ Résultats obtenus
+
+5️⃣ Structure du projet
+
+**6️⃣ Discussion**
+
+# 6️⃣ Discussion
+
+{{< include sections/6-discussion.qmd >}}
+
+---

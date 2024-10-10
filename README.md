@@ -45,3 +45,14 @@ Configurations possibles :
     - mlflow: boolean *utiliser mlflow, par défaut True*  
 
 
+## Afficher le diaporama résumant ce challenge
+
+```sh
+quarto preview diapo-resume/index.qmd --host 0.0.0.0 --port 5000
+```
+
+Fermer la prévisualisation sur le port 5000
+
+```sh
+fuser -k 5000/tcp
+```
