@@ -47,6 +47,12 @@ Configurations possibles :
 
 ## Afficher le diaporama résumant ce challenge
 
+### Visualiser avec le pdf
+
+Ouvrir le fichier diapo-resume/Challenge _ détection automatisée de zones d’occupation humaines sur imagerie satellite.pdf
+
+### Afficher en quarto 
+
 ```sh
 quarto preview diapo-resume/index.qmd --host 0.0.0.0 --port 5000
 ```
