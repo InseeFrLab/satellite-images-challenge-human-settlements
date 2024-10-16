@@ -1,0 +1,45 @@
+project:
+  type: website
+
+format:
+  revealjs:
+    theme: solarized
+    slide-number: true
+    transition: slide
+    controls: true
+    chalkboard:
+      theme: whiteboard
+    lang: fr-FR
+    slide-tone: false
+    ascii: true
+
+title: "Challenge : détection automatisée de zones d'occupation humaines sur imagerie satellite"
+subtitle: "**[Raya Berova & Mohamed Sekouri]{.orange}**"
+date: "10/10/2024"
+date-format: "D MMMM YYYY"
+
+site:
+  title: "Challenge : détection automatisée de zones d'occupation humaines"
+  navbar:
+    left:
+      - text: "Introduction"
+        href: diapo-resume/sections/1-introduction.qmd
+      - text: "Les données"
+        href: diapo-resume/sections/2-data.qmd
+      - text: "Méthodologie"
+        href: diapo-resume/sections/3-methodo.qmd
+      - text: "Résultats"
+        href: diapo-resume/sections/4-results.qmd
+      - text: "Structure du projet"
+        href: diapo-resume/sections/5-tools.qmd
+      - text: "Discussion"
+        href: diapo-resume/sections/6-discussion.qmd
+
+output-dir: docs
+
+# Uncomment to publish to GitHub pages
+# Use "main" if your default branch is main
+publish:
+  gh-pages:
+    branch: gh-pages
+    path: /
