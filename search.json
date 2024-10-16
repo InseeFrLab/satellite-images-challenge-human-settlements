@@ -1,0 +1,219 @@
+[
+  {
+    "objectID": "diapo-resume/index.html#contexte",
+    "href": "diapo-resume/index.html#contexte",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Contexte",
+    "text": "Contexte\nINEGI : Institut national des statistiques et de la Géographie au Mexique\n\nBesoin de détecter les zones d’occupation humaine au Mexique pour connaître la croissance rapide du pays.\nImages satellites: pour voir les zones sans faire déplacer des agents.\nMéthode de détection automatisée car à l’oeil nu c’est trop lent et coûteux."
+  },
+  {
+    "objectID": "diapo-resume/index.html#une-image-dans-le-jeu-de-données",
+    "href": "diapo-resume/index.html#une-image-dans-le-jeu-de-données",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Une image dans le jeu de données",
+    "text": "Une image dans le jeu de données\nImages = empilement de plusieurs sources de données satellitaires (incompréhensibles à l’oeil nu)\nUne image dans le jeu de données fourni = une matrice de 16x16 pixels avec 6 dimensions (ici les bandes spectrales)"
+  },
+  {
+    "objectID": "diapo-resume/index.html#bandes-spectrales-fournies",
+    "href": "diapo-resume/index.html#bandes-spectrales-fournies",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Bandes spectrales fournies",
+    "text": "Bandes spectrales fournies\nLes différentes bandes :\n\nBleu\nVert\nRouge\nProche infrarouge (NIR)\nInfrarouge à ondes courtes 1 (SWIR 1)\nInfrarouge à ondes courtes 2 (SWIR 2)"
+  },
+  {
+    "objectID": "diapo-resume/index.html#bandes-spectrales",
+    "href": "diapo-resume/index.html#bandes-spectrales",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Bandes spectrales",
+    "text": "Bandes spectrales"
+  },
+  {
+    "objectID": "diapo-resume/index.html#jeu-de-données",
+    "href": "diapo-resume/index.html#jeu-de-données",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Jeu de données",
+    "text": "Jeu de données\n\n1,1M d’images annotées (1 si zone d’occupation humaine, 0 sinon) :\n\n200 000 images annotées 1\n900 000 images annotées 0\n\nJeu d’images à annoter pour évaluation : 120 000 images"
+  },
+  {
+    "objectID": "diapo-resume/index.html#entraînement-de-modèle",
+    "href": "diapo-resume/index.html#entraînement-de-modèle",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Entraînement de modèle",
+    "text": "Entraînement de modèle\nEntraîner un modèle de Computer Vision pour classifier automatiquement une image selon la présence ou non de zone d’occupation humaine :\n\nL’ensemble des données annoté est divisé en deux parties : données d’entraînement et données de validation\nDivision en Batches : Les données sont ensuite divisées en petits sous-ensembles appelés batches."
+  },
+  {
+    "objectID": "diapo-resume/index.html#entraînement-de-modèle---bis",
+    "href": "diapo-resume/index.html#entraînement-de-modèle---bis",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Entraînement de modèle - bis",
+    "text": "Entraînement de modèle - bis\n\nÀ la fin de chaque batch, le modèle est validé sur les données de validation pour évaluer sa performance afin de s’améliorer\nPlusieurs passages d’epochs : Chaque epoch consiste à faire passer tous les batches dans le réseau de neurones\n\nAvoir un GPU pour faire tourner plus rapidement les entraînements."
+  },
+  {
+    "objectID": "diapo-resume/index.html#prétraitement-des-données",
+    "href": "diapo-resume/index.html#prétraitement-des-données",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Prétraitement des données",
+    "text": "Prétraitement des données\n\nAvoir un jeu de données équilibré : même nombre d’images 0 et 1\nJeu de données stables pour comparer les différents entraînements (toujours les mêmes) :\n\n240 000 images entraînement\n80 000 images validation\n80 000 images test\n\nNormaliser les images avec la moyenne"
+  },
+  {
+    "objectID": "diapo-resume/index.html#réseau-de-neurones-et-loss",
+    "href": "diapo-resume/index.html#réseau-de-neurones-et-loss",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Réseau de neurones et loss",
+    "text": "Réseau de neurones et loss\n\nChoisir un modèle adapté (réseau de neurones) et le fine tuner (le modifier pour nos données)\nSélectionner une loss : fonction qui calcule la perte entre les annotations qui représentent la vérité et les prédictions pendant l’entraînement (utilisé lors de l’étape de validation)\nSurveiller les entraînements pour éviter le sur-apprentissage"
+  },
+  {
+    "objectID": "diapo-resume/index.html#evaluation-des-performances",
+    "href": "diapo-resume/index.html#evaluation-des-performances",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Evaluation des performances",
+    "text": "Evaluation des performances\nLes perfomances doivent être évalués sur des données qui n’ont pas servis à l’entraînement : les images test.\nUtilisation de métriques parlantes : accuracy, precision, recall, AUC (métrique utilisée par INEGI pour départager les entraînements des participants)."
+  },
+  {
+    "objectID": "diapo-resume/index.html#résultats",
+    "href": "diapo-resume/index.html#résultats",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Résultats",
+    "text": "Résultats\nMeilleur entraînement :\n\nun modèle ResNet18\nune loss binary cross-entropy\n22 epochs\nFini en 5 minutes\n\nMétriques sur images test :\n\nAccuracy : 0.81\nPrecision : 0.81\nRecall : 0.82\nAUC : 0.81"
+  },
+  {
+    "objectID": "diapo-resume/index.html#score-obtenu-lors-du-challenge",
+    "href": "diapo-resume/index.html#score-obtenu-lors-du-challenge",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Score obtenu lors du challenge",
+    "text": "Score obtenu lors du challenge\nUne fois le fichier à annoter soumis, on a obtenu : AUC = 0.76\nScore du gagnant du challenge : AUC = 0.86"
+  },
+  {
+    "objectID": "diapo-resume/index.html#outils",
+    "href": "diapo-resume/index.html#outils",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Outils",
+    "text": "Outils\nDatalab pour utiliser un GPU.\nMLflow pour surveiller les entraînements, les stocker et les comparer : lien MLFLOW.\nTemplate en python pour entraîner des modèles de Deep Learning facile à modifier et adaptée pour essayer plein de paramètres différents : dépot git."
+  },
+  {
+    "objectID": "diapo-resume/index.html#pistes-damélioration",
+    "href": "diapo-resume/index.html#pistes-damélioration",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Pistes d’amélioration",
+    "text": "Pistes d’amélioration\n\nMeilleure compréhension des données pour trouver des solutions adaptées\nContrôle de la pertinence des annotations fournies"
+  },
+  {
+    "objectID": "diapo-resume/sections/2-data.html#une-image-dans-le-jeu-de-données",
+    "href": "diapo-resume/sections/2-data.html#une-image-dans-le-jeu-de-données",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Une image dans le jeu de données",
+    "text": "Une image dans le jeu de données\nImages = empilement de plusieurs sources de données satellitaires (incompréhensibles à l’oeil nu)\nUne image dans le jeu de données fourni = une matrice de 16x16 pixels avec 6 dimensions (ici les bandes spectrales)"
+  },
+  {
+    "objectID": "diapo-resume/sections/2-data.html#bandes-spectrales-fournies",
+    "href": "diapo-resume/sections/2-data.html#bandes-spectrales-fournies",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Bandes spectrales fournies",
+    "text": "Bandes spectrales fournies\nLes différentes bandes :\n\nBleu\nVert\nRouge\nProche infrarouge (NIR)\nInfrarouge à ondes courtes 1 (SWIR 1)\nInfrarouge à ondes courtes 2 (SWIR 2)"
+  },
+  {
+    "objectID": "diapo-resume/sections/2-data.html#bandes-spectrales",
+    "href": "diapo-resume/sections/2-data.html#bandes-spectrales",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Bandes spectrales",
+    "text": "Bandes spectrales"
+  },
+  {
+    "objectID": "diapo-resume/sections/2-data.html#jeu-de-données",
+    "href": "diapo-resume/sections/2-data.html#jeu-de-données",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Jeu de données",
+    "text": "Jeu de données\n\n1,1M d’images annotées (1 si zone d’occupation humaine, 0 sinon) :\n\n200 000 images annotées 1\n900 000 images annotées 0\n\nJeu d’images à annoter pour évaluation : 120 000 images"
+  },
+  {
+    "objectID": "diapo-resume/sections/1-introduction.html#contexte",
+    "href": "diapo-resume/sections/1-introduction.html#contexte",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Contexte",
+    "text": "Contexte\nINEGI : Institut national des statistiques et de la Géographie au Mexique\n\nBesoin de détecter les zones d’occupation humaine au Mexique pour connaître la croissance rapide du pays.\nImages satellites: pour voir les zones sans faire déplacer des agents.\nMéthode de détection automatisée car à l’oeil nu c’est trop lent et coûteux."
+  },
+  {
+    "objectID": "diapo-resume/sections/4-results.html#résultats",
+    "href": "diapo-resume/sections/4-results.html#résultats",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Résultats",
+    "text": "Résultats\nMeilleur entraînement :\n\nun modèle ResNet18\nune loss binary cross-entropy\n22 epochs\nFini en 5 minutes\n\nMétriques sur images test :\n\nAccuracy : 0.81\nPrecision : 0.81\nRecall : 0.82\nAUC : 0.81"
+  },
+  {
+    "objectID": "diapo-resume/sections/4-results.html#score-obtenu-lors-du-challenge",
+    "href": "diapo-resume/sections/4-results.html#score-obtenu-lors-du-challenge",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Score obtenu lors du challenge",
+    "text": "Score obtenu lors du challenge\nUne fois le fichier à annoter soumis, on a obtenu : AUC = 0.76\nScore du gagnant du challenge : AUC = 0.86"
+  },
+  {
+    "objectID": "notebooks/start_challenge.html#train-data",
+    "href": "notebooks/start_challenge.html#train-data",
+    "title": "Libraries and s3 connexion",
+    "section": "Train data",
+    "text": "Train data\n\n\nShape of X (images): (1100000, 16, 16, 6)\nShape of y (labels): (1100000,)\n\n\nVisualize first image (uint16)\n\n\n1100000"
+  },
+  {
+    "objectID": "notebooks/start_challenge.html#test-data",
+    "href": "notebooks/start_challenge.html#test-data",
+    "title": "Libraries and s3 connexion",
+    "section": "Test data",
+    "text": "Test data\nCreate y_test\nBalance data\n\n\nNumber of 1's in balanced y: 100000\nNumber of 0's in balanced y: 100000\n\n\nSplit data\n\n\nTaille des données d'entraînement : (120000, 16, 16, 6) (120000,)\nTaille des données de validation : (40000, 16, 16, 6) (40000,)\nTaille des données de test : (40000, 16, 16, 6) (40000,)"
+  },
+  {
+    "objectID": "notebooks/start_challenge.html#entrainements",
+    "href": "notebooks/start_challenge.html#entrainements",
+    "title": "Libraries and s3 connexion",
+    "section": "Entrainements",
+    "text": "Entrainements"
+  },
+  {
+    "objectID": "diapo-resume/sections/6-discussion.html#pistes-damélioration",
+    "href": "diapo-resume/sections/6-discussion.html#pistes-damélioration",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Pistes d’amélioration",
+    "text": "Pistes d’amélioration\n\nMeilleure compréhension des données pour trouver des solutions adaptées\nContrôle de la pertinence des annotations fournies"
+  },
+  {
+    "objectID": "diapo-resume/sections/5-tools.html#outils",
+    "href": "diapo-resume/sections/5-tools.html#outils",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Outils",
+    "text": "Outils\nDatalab pour utiliser un GPU.\nMLflow pour surveiller les entraînements, les stocker et les comparer : lien MLFLOW.\nTemplate en python pour entraîner des modèles de Deep Learning facile à modifier et adaptée pour essayer plein de paramètres différents : dépot git."
+  },
+  {
+    "objectID": "diapo-resume/sections/3-methodo.html#entraînement-de-modèle",
+    "href": "diapo-resume/sections/3-methodo.html#entraînement-de-modèle",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Entraînement de modèle",
+    "text": "Entraînement de modèle\nEntraîner un modèle de Computer Vision pour classifier automatiquement une image selon la présence ou non de zone d’occupation humaine :\n\nL’ensemble des données annoté est divisé en deux parties : données d’entraînement et données de validation\nDivision en Batches : Les données sont ensuite divisées en petits sous-ensembles appelés batches."
+  },
+  {
+    "objectID": "diapo-resume/sections/3-methodo.html#entraînement-de-modèle---bis",
+    "href": "diapo-resume/sections/3-methodo.html#entraînement-de-modèle---bis",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Entraînement de modèle - bis",
+    "text": "Entraînement de modèle - bis\n\nÀ la fin de chaque batch, le modèle est validé sur les données de validation pour évaluer sa performance afin de s’améliorer\nPlusieurs passages d’epochs : Chaque epoch consiste à faire passer tous les batches dans le réseau de neurones\n\nAvoir un GPU pour faire tourner plus rapidement les entraînements."
+  },
+  {
+    "objectID": "diapo-resume/sections/3-methodo.html#prétraitement-des-données",
+    "href": "diapo-resume/sections/3-methodo.html#prétraitement-des-données",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Prétraitement des données",
+    "text": "Prétraitement des données\n\nAvoir un jeu de données équilibré : même nombre d’images 0 et 1\nJeu de données stables pour comparer les différents entraînements (toujours les mêmes) :\n\n240 000 images entraînement\n80 000 images validation\n80 000 images test\n\nNormaliser les images avec la moyenne"
+  },
+  {
+    "objectID": "diapo-resume/sections/3-methodo.html#réseau-de-neurones-et-loss",
+    "href": "diapo-resume/sections/3-methodo.html#réseau-de-neurones-et-loss",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Réseau de neurones et loss",
+    "text": "Réseau de neurones et loss\n\nChoisir un modèle adapté (réseau de neurones) et le fine tuner (le modifier pour nos données)\nSélectionner une loss : fonction qui calcule la perte entre les annotations qui représentent la vérité et les prédictions pendant l’entraînement (utilisé lors de l’étape de validation)\nSurveiller les entraînements pour éviter le sur-apprentissage"
+  },
+  {
+    "objectID": "diapo-resume/sections/3-methodo.html#evaluation-des-performances",
+    "href": "diapo-resume/sections/3-methodo.html#evaluation-des-performances",
+    "title": "Challenge : détection automatisée de zones d’occupation humaines sur imagerie satellite",
+    "section": "Evaluation des performances",
+    "text": "Evaluation des performances\nLes perfomances doivent être évalués sur des données qui n’ont pas servis à l’entraînement : les images test.\nUtilisation de métriques parlantes : accuracy, precision, recall, AUC (métrique utilisée par INEGI pour départager les entraînements des participants)."
+  }
+]
