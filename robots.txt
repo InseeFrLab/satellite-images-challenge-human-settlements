@@ -1,0 +1,1 @@
+Sitemap: https://InseeFrLab.github.io/satellite-images-challenge-human-settlements/sitemap.xml
