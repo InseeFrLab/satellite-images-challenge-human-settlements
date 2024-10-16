@@ -1,39 +1,27 @@
-name: Quarto Publish
+name: Publish slides
 
 on:
   push:
     branches:
-      - main  # Déclenche l'action uniquement sur la branche main
+      - "main"
+  workflow_dispatch:
 
 jobs:
-  build-deploy:
+  publish-slides:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v3
-        
+
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+
+
+      - name: Render and Publish
+        uses: quarto-dev/quarto-actions/publish@v2
         with:
-          version: latest
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libfontconfig1  # Installer la dépendance nécessaire pour Quarto
-          
-      - name: Install Pandoc (if needed)
-        run: |
-          sudo apt-get install pandoc -y
-
-      - name: Render site
-        run: |
-          quarto render
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-          publish_branch: gh-pages
+          target: gh-pages
