@@ -47,18 +47,5 @@ Configurations possibles :
 
 ## Afficher le diaporama résumant ce challenge
 
-### Visualiser avec le pdf
+[Site du diaporama](https://inseefrlab.github.io/satellite-images-challenge-human-settlements/)
 
-Ouvrir le fichier [Diaporama PDF](diapo-resume/Challenge_détection_automatisée_de_zones_occupation_humaines_sur_imagerie_satellite.pdf)
-
-### Afficher en quarto 
-
-```sh
-quarto preview diapo-resume/index.qmd --host 0.0.0.0 --port 5000
-```
-
-Fermer la prévisualisation sur le port 5000
-
-```sh
-fuser -k 5000/tcp
-```
