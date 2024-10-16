@@ -49,7 +49,7 @@ Configurations possibles :
 
 ### Visualiser avec le pdf
 
-Ouvrir le fichier diapo-resume/Challenge _ détection automatisée de zones d’occupation humaines sur imagerie satellite.pdf
+Ouvrir le fichier [Diaporama PDF](diapo-resume/Challenge_détection_automatisée_de_zones_occupation_humaines_sur_imagerie_satellite.pdf)
 
 ### Afficher en quarto 
 
