@@ -8,3 +8,4 @@ lightning_logs/
 index_files/
 /.quarto/
 /_site/
+/site_libs/

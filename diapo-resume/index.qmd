@@ -19,7 +19,6 @@ revealjs:
   slideNumber: true
   theme: solarized
 controls: true
-css: ../custom.css
 ascii: true
 ---
 

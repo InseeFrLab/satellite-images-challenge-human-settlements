@@ -1,5 +1,11 @@
 project:
   type: website
+  render:
+    - /diapo-resume/index.qmd
+
+render:
+  exclude:
+    - "*.ipynb"
 
 format:
   revealjs:
